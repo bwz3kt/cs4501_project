@@ -1,0 +1,12 @@
+{% extends 'reg_base.html' %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2 text-center gtco-heading">
+    <h3>Log in</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p}}
+    <button type="submit">Log in</button> <a href="/api/auth/signup" class="btn"> Don't have an account? </a>
+  </form>
+</div>
+{% endblock %}

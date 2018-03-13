@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2 text-center gtco-heading">
+    <h3>{{apartment.name}}</h3>
+    <p>ID: ${{apartment.id}}</p>
+    <p>Price: ${{apartment.price}}</p>
+    <p>Overall Rating: {{apartment.rating}}</p>
+    <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+              <th>Comment Number</th>
+              <th>Rating</th>
+              <th>Comment</th>
+            </tr>
+            </thead>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{comment.rating}}</td>
+                <td>{{comment.comment}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+    <div class="col-md-8 col-md-offset-2 text-center gtco-section">
+        <h3>Comment</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+            {{ form.as_p }}
+            <button type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+    <!--<a href="/api/objects/comment/{{apartment.id}}">Comment</a>-->
+</div>
+{% endblock %}
