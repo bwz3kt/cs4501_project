@@ -1,0 +1,19 @@
+User Stories for Project 3
+
+As a prospective tenant, I should be able to view a page of the top 5 highly-rated available apartments from a link in the home page.
+-The page contains only the top 5 highly rated apartments and a link to see more.
+
+As a prospective tenant, I should be able to view a page of the top 5 cheapest apartments from a link in the home page.
+-The page contains only the top 5 cheapest apartments and a link to see more.
+
+As a renter, I should be able to delete apartments from the apartments list.
+
+As a tenant, I should be able to see the average rating, price, and name of each apartment in the apartment list.
+-The name should have a link t the apartment's detail page.
+
+As a renter, I should be able to create a new apartment with a name and price.
+-Create apartment buttons should be below each apartment list and in the navbar.
+
+User Stories for Project 4
+
+-TODO
