@@ -7,7 +7,7 @@ models:
     - .:/app
   ports:
     - "8001:8000"
-  command: bash -c "pip install django-mysql && python /app/models/manage.py makemigrations api && python /app/models/manage.py loaddata /app/models/db.json && python /app/models/manage.py migrate && python /app/models/manage.py test api && mod_wsgi-express start-server --working-directory /app/models --reload-on-changes /app/models/models/wsgi.py"
+  command: bash -c "pip install django-mysql && python /app/models/manage.py makemigrations api && python /app/models/manage.py migrate && python /app/models/manage.py loaddata /app/models/db.json && python /app/models/manage.py test api && mod_wsgi-express start-server --working-directory /app/models --reload-on-changes /app/models/models/wsgi.py"
 
 exp:
   image: tp33/django

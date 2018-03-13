@@ -12,7 +12,6 @@ def index(request):
     req = urllib.request.Request('http://exp-api:8000/v1/home')
     response = urllib.request.urlopen(req).read().decode('utf-8')
     json_req = json.loads(response)
-    print(json_req)
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
@@ -22,7 +21,6 @@ def top(request):
     req = urllib.request.Request('http://exp-api:8000/v1/top')
     response = urllib.request.urlopen(req).read().decode('utf-8')
     json_req = json.loads(response)
-    print(json_req)
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
@@ -31,7 +29,6 @@ def price(request):
     req = urllib.request.Request('http://exp-api:8000/v1/price')
     response = urllib.request.urlopen(req).read().decode('utf-8')
     json_req = json.loads(response)
-    print(json_req)
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
