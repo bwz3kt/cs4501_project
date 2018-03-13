@@ -55,6 +55,21 @@ def create(request):
         return redirect('/')
 
 @csrf_exempt
+def create(request):
+    if request.method == "GET":
+        form = CreateForm()
+        return render(request, "myapp/create.html", {'form': form})
+    else:
+        form = CreateForm(request.POST)
+        if form.is_valid():
+            post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price")}
+            post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            # resp = json.loads(resp_json)
+        return redirect('/')
+
+@csrf_exempt
 def update(request, id):
     if request.method == "GET":
         form = UpdateForm()
@@ -74,18 +89,18 @@ def details(request, id):
     req = urllib.request.Request('http://exp-api:8000/v1/get_details/' + str(id))
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
-
-    if request.method == "GET":
-        form = CommentForm()
-        return render(request, 'myapp/view.html', {'apartment': resp['result'][0], 'form':form})
-    else:
-        form = CommentForm(request.POST)
-        # post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price")}
-        # post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
-        # req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
-        # resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-        # resp = json.loads(resp_json)
-    return redirect('/')
+    return render(request, 'myapp/view.html', {'apartment': resp['result'][0]})
+    # if request.method == "GET":
+    #     form = CommentForm()
+    #     return render(request, 'myapp/view.html', {'apartment': resp['result'][0])
+    # else:
+    #     form = CommentForm(request.POST)
+    #     # post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price")}
+    #     # post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    #     # req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
+    #     # resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    #     # resp = json.loads(resp_json)
+    # return redirect('/')
 
 @csrf_exempt
 def delete(request, id):

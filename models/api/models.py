@@ -11,11 +11,11 @@ class Apartment(models.Model):
         decimal_places=2
     )
 
-class Comment(models.Model):
-    comment = models.CharField(max_length=500)
-    rating = models.IntegerField(
-        default=0,
-        validators=[MaxValueValidator(5), MinValueValidator(1)]
-    )
-    associated_apt = models.ForeignKey('Apartment')
+# class Comment(models.Model):
+#     comment = models.CharField(max_length=500)
+#     rating = models.IntegerField(
+#         default=0,
+#         validators=[MaxValueValidator(5), MinValueValidator(1)]
+#     )
+#     associated_apt = models.ForeignKey('Apartment')
 
