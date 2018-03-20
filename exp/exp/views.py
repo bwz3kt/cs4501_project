@@ -94,3 +94,12 @@ def delete(request, id):
     response = urllib.request.urlopen(template_data).read().decode('utf-8')
     response = json.loads(response)['message']
     return JsonResponse({'result': response})
+
+@csrf_exempt
+def logout(request):
+    post_data = {'auth': request.POST.get("auth")}
+    post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/logout/', data=post_encoded, method='POST')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    response = json.loads(resp_json)
+    return JsonResponse({'valid': response['valid'], 'result': response['message']})

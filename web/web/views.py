@@ -49,7 +49,7 @@ def create(request):
             req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             # resp = json.loads(resp_json)
-        return redirect('/')
+        return redirect('/home')
 
 @csrf_exempt
 def signup(request):
@@ -105,7 +105,7 @@ def update(request, id):
             req = urllib.request.Request('http://exp-api:8000/v1/update/'+str(id)+'/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             # resp = json.loads(resp_json)
-        return redirect('/')
+        return redirect('/home')
 
 @csrf_exempt
 def details(request, id):
@@ -130,4 +130,21 @@ def delete(request, id):
     req = urllib.request.Request('http://exp-api:8000/v1/delete/' + str(id))
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
-    return redirect('/')
+    return redirect('/home')
+
+@csrf_exempt
+def logout(request):
+    if (request.COOKIES.get('auth') is not None or ''):
+        post_data = {'auth': request.COOKIES.get('auth')}
+        post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+        req = urllib.request.Request('http://exp-api:8000/v1/logout/', data=post_encoded, method='POST')
+        resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+        resp = json.loads(resp_json)
+        if resp['valid'] == False:
+            return JsonResponse(resp)
+        else:
+            response = HttpResponseRedirect('/login/')
+            response.delete_cookie("auth")
+            return response
+    else:
+        return  JsonResponse({'valid': False, 'message': ""})

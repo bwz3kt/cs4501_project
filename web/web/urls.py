@@ -27,10 +27,11 @@ urlpatterns = [
     url(r'^create/', views.create, name='create'),
     url(r'^top/', views.top, name='top'),
     url(r'^signup/', views.signup, name='signup'),
-    url(r'^login/', views.login, name='login'),
+    url(r'^logout/', views.logout, name='logout'),
+    url(r'^$', views.login, name='login'),
     url(r'^price/', views.price, name='price'),
     url(r'^intro/', views.intro, name='intro'),
-    url(r'^$', views.index, name='index'),
+    url(r'^home/', views.index, name='index'),
     url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
