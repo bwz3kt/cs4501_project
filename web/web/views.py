@@ -52,18 +52,20 @@ def create(request):
         return redirect('/')
 
 @csrf_exempt
-def create(request):
+def signup(request):
     if request.method == "GET":
-        form = CreateForm()
-        return render(request, "myapp/create.html", {'form': form})
+        form = SignupForm()
+        return render(request, "registration/signup.html", {'form': form})
     else:
-        form = CreateForm(request.POST)
+        form = SignupForm(request.POST)
         if form.is_valid():
-            post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price")}
+            post_data = {'username': request.POST.get("username"), 'email': request.POST.get("email"), 'password': request.POST.get("password"), 'passwordConfirm': request.POST.get("passwordConfirm")}
             post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
-            req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
+            req = urllib.request.Request('http://exp-api:8000/v1/signup/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-            # resp = json.loads(resp_json)
+            resp = json.loads(resp_json)
+        if resp['valid'] == False:
+            return JsonResponse(resp)
         return redirect('/')
 
 @csrf_exempt

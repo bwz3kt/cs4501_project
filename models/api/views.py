@@ -64,7 +64,33 @@ def item(request, id):
         data['message'] = 'Apartment does not exist.'
     return JsonResponse(data)
 
-
+@csrf_exempt
+def signup(request):
+    data = {}
+    if request.method == "POST":
+        if User.objects.all().filter(username=request.POST.get('username')).exists():
+            data['valid'] = False
+            data['message'] = 'Username already exists.'
+        elif User.objects.all().filter(email=request.POST.get('email')).exists():
+            data['valid'] = False
+            data['message'] = "Email already has an associated account."
+        else:
+            user = User()
+            user.username = request.POST.get('username')
+            user.password = request.POST.get('password')
+            user.email = request.POST.get('email')
+            user.save()
+            jsondata = [{
+                "username": user.username,
+                'id': user.id
+            }]
+            data['valid'] = True
+            data['message'] = 'Created new User.'
+            data['result'] = jsondata
+    else:
+        data['valid'] = False
+        data['message'] = 'Not a POST request.'
+    return JsonResponse(data)
 
 @csrf_exempt
 def delete(request, id):

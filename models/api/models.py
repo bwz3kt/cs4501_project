@@ -11,6 +11,16 @@ class Apartment(models.Model):
         decimal_places=2
     )
 
+class User(models.Model):
+    username = models.CharField(unique=True, max_length=100)
+    password = models.CharField(max_length=100)
+    email = models.CharField(unique=True, max_length=100)
+
+class Authenticator(models.Model):
+    authenticator = models.CharField(primary_key=True, max_length=100)
+    user_id = models.ForeignKey('User')
+    date_created = models.DateField()
+
 # class Comment(models.Model):
 #     comment = models.CharField(max_length=500)
 #     rating = models.IntegerField(
