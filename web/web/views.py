@@ -7,6 +7,30 @@ import urllib.request
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
 
+def login_required(f):
+    def wrap(request, *args, **kwargs):
+        if (request.COOKIES.get('auth') is None):
+            authenticated = False
+        else:
+            post_data = {'auth': request.COOKIES.get('auth')}
+            post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/v1/auth/', data=post_encoded, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            resp = json.loads(resp_json)
+            print(resp['valid'])
+            if resp['valid'] == True:
+                authenticated = True
+            else:
+                authenticated = False
+        # authentication failed
+        if not authenticated:
+            # redirect the user to the login page
+            return HttpResponseRedirect('/')
+        else:
+            return f(request, *args, **kwargs)
+    return wrap
+
+@login_required
 @csrf_exempt
 def index(request):
     req = urllib.request.Request('http://exp-api:8000/v1/home')
@@ -15,7 +39,7 @@ def index(request):
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
-
+@login_required
 @csrf_exempt
 def top(request):
     req = urllib.request.Request('http://exp-api:8000/v1/top')
@@ -24,6 +48,7 @@ def top(request):
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
+@login_required
 @csrf_exempt
 def price(request):
     req = urllib.request.Request('http://exp-api:8000/v1/price')
@@ -32,10 +57,12 @@ def price(request):
     context = {"json_req": json_req}
     return render(request, "foo/home.html", {"objects":json_req['results']})
 
+@login_required
 @csrf_exempt
 def intro(request):
     return render(request, "foo/intro.html")
 
+@login_required
 @csrf_exempt
 def create(request):
     if request.method == "GET":
@@ -86,12 +113,13 @@ def login(request):
             resp = json.loads(resp_json)
         if resp['valid'] == False:
             return JsonResponse(resp)
-            #return redirect('/login')
+            #return redirect('/')
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
             return response
 
+@login_required
 @csrf_exempt
 def update(request, id):
     if request.method == "GET":
@@ -107,6 +135,7 @@ def update(request, id):
             # resp = json.loads(resp_json)
         return redirect('/home')
 
+@login_required
 @csrf_exempt
 def details(request, id):
     req = urllib.request.Request('http://exp-api:8000/v1/get_details/' + str(id))
@@ -125,6 +154,7 @@ def details(request, id):
     #     # resp = json.loads(resp_json)
     # return redirect('/')
 
+@login_required
 @csrf_exempt
 def delete(request, id):
     req = urllib.request.Request('http://exp-api:8000/v1/delete/' + str(id))
@@ -132,6 +162,7 @@ def delete(request, id):
     resp = json.loads(resp_json)
     return redirect('/home')
 
+@login_required
 @csrf_exempt
 def logout(request):
     if (request.COOKIES.get('auth') is not None or ''):
@@ -143,7 +174,7 @@ def logout(request):
         if resp['valid'] == False:
             return JsonResponse(resp)
         else:
-            response = HttpResponseRedirect('/login/')
+            response = HttpResponseRedirect('/')
             response.delete_cookie("auth")
             return response
     else:

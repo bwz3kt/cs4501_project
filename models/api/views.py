@@ -155,6 +155,17 @@ def logout(request):
     return JsonResponse(data)
 
 @csrf_exempt
+def auth(request):
+    data = {}
+    if not (Authenticator.objects.all().filter(authenticator=request.POST.get('auth')).exists()):
+        data['valid'] = False
+        data['message'] = 'Authenticator does not exist.'
+    else:
+        data['valid'] = True
+        data['message'] = 'Authenticator exists';
+    return JsonResponse(data)
+
+@csrf_exempt
 def delete(request, id):
     data = {}
     if request.method == "GET":
@@ -214,3 +225,4 @@ def update(request, id):
         data['valid'] = False
         data['message'] = 'Not a POST request.'
     return JsonResponse(data)
+
