@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import *
 
 class Apartment(models.Model):
     name = models.CharField(max_length=100)
@@ -18,8 +19,8 @@ class User(models.Model):
 
 class Authenticator(models.Model):
     authenticator = models.CharField(primary_key=True, max_length=100)
-    user_id = models.ForeignKey('User')
-    date_created = models.DateField()
+    user_id = models.IntegerField
+    date_created = models.DateField(default=datetime.now)
 
 # class Comment(models.Model):
 #     comment = models.CharField(max_length=500)

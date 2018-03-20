@@ -66,6 +66,9 @@ def signup(request):
             resp = json.loads(resp_json)
         if resp['valid'] == False:
             return JsonResponse(resp)
+        else:
+            response = HttpResponseRedirect('/intro/')
+            response.set_cookie("auth", resp['authenticator'])
         return redirect('/')
 
 @csrf_exempt

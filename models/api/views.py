@@ -80,6 +80,17 @@ def signup(request):
             user.password = request.POST.get('password')
             user.email = request.POST.get('email')
             user.save()
+
+            authenticator = Authenticator()
+            authenticator_value = hmac.new(
+                key=settings.SECRET_KEY.encode('utf-8'),
+                msg=os.urandom(32),
+                digestmod='sha256',
+            ).hexdigest()
+            authenticator.authenticator = authenticator_value
+            authenticator.user_id = user.id
+            authenticator.save()
+
             jsondata = [{
                 "username": user.username,
                 'id': user.id
@@ -87,6 +98,7 @@ def signup(request):
             data['valid'] = True
             data['message'] = 'Created new User.'
             data['result'] = jsondata
+            data['authenticator'] = authenticator_value
     else:
         data['valid'] = False
         data['message'] = 'Not a POST request.'

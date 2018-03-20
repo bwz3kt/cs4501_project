@@ -51,7 +51,7 @@ def create(request):
 
 @csrf_exempt
 def signup(request):
-    if request.POST.get("username") == request.POST.get("passwordConfirm"):
+    if request.POST.get("password") == request.POST.get("passwordConfirm"):
         password = make_password(request.POST.get("password"))
         post_data = {'username': request.POST.get("username"), 'email': request.POST.get("email"),
                      'password': request.POST.get("password")}
@@ -61,7 +61,7 @@ def signup(request):
         response = json.loads(resp_json)
     else:
         return JsonResponse({'valid': False, 'result': "Passwords do not match"})
-    return JsonResponse({'valid': response['valid'],'result': response['message']})
+    return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator']})
 
 @csrf_exempt
 def update(request, id):
