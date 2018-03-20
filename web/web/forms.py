@@ -18,3 +18,7 @@ class SignupForm(forms.Form):
     password = forms.CharField(max_length=30, required=True)
     passwordConfirm = forms.CharField(max_length=30, required=True)
 
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=30, required=True)
+    password = forms.CharField(max_length=30, required=True)
+

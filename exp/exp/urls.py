@@ -19,6 +19,7 @@ from . import views
 urlpatterns = [
     url(r'^v1/create/', views.create, name='create'),
     url(r'^v1/signup/', views.signup, name='signup'),
+    url(r'^v1/login/', views.login, name='login'),
     url(r'^v1/get_details/(?P<id>[0-9]+)/$', views.get_details, name='get_details'),
     url(r'^v1/home/', views.get_data, name='index'),
     url(r'^v1/top/', views.get_top_data, name='top'),

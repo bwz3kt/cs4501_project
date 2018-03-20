@@ -8,6 +8,7 @@ import datetime
 import os
 import hmac
 from django.conf import settings
+from django.contrib.auth.hashers import *
 
 
 @csrf_exempt
@@ -99,6 +100,42 @@ def signup(request):
             data['message'] = 'Created new User.'
             data['result'] = jsondata
             data['authenticator'] = authenticator_value
+    else:
+        data['valid'] = False
+        data['message'] = 'Not a POST request.'
+    return JsonResponse(data)
+
+@csrf_exempt
+def login(request):
+    data = {}
+    if request.method == "POST":
+        if not (User.objects.all().filter(username=request.POST.get('username')).exists()):
+            data['valid'] = False
+            data['message'] = 'Username does not exist.'
+        else:
+            user = User.objects.get(username=request.POST.get('username'))
+            if check_password(request.POST.get('password'), user.password):
+                authenticator = Authenticator()
+                authenticator_value = hmac.new(
+                    key=settings.SECRET_KEY.encode('utf-8'),
+                    msg=os.urandom(32),
+                    digestmod='sha256',
+                ).hexdigest()
+                authenticator.authenticator = authenticator_value
+                authenticator.user_id = user.id
+                authenticator.save()
+
+                jsondata = [{
+                    "username": user.username,
+                    'id': user.id
+                }]
+                data['valid'] = True
+                data['message'] = 'User authenticated.'
+                data['result'] = jsondata
+                data['authenticator'] = authenticator_value
+            else:
+                data['valid'] = False
+                data['message'] = 'Password incorrect.'
     else:
         data['valid'] = False
         data['message'] = 'Not a POST request.'

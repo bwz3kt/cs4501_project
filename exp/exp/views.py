@@ -54,14 +54,30 @@ def signup(request):
     if request.POST.get("password") == request.POST.get("passwordConfirm"):
         password = make_password(request.POST.get("password"))
         post_data = {'username': request.POST.get("username"), 'email': request.POST.get("email"),
-                     'password': request.POST.get("password")}
+                     'password': password}
         post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
         req = urllib.request.Request('http://models-api:8000/api/v1/signup/', data=post_encoded, method='POST')
         resp_json = urllib.request.urlopen(req).read().decode('utf-8')
         response = json.loads(resp_json)
     else:
         return JsonResponse({'valid': False, 'result': "Passwords do not match"})
-    return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator']})
+    if response['valid']:
+        return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator']})
+    else:
+        return JsonResponse({'valid': response['valid'],'result': response['message']})
+
+@csrf_exempt
+def login(request):
+    post_data = {'username': request.POST.get("username"),
+                 'password': request.POST.get("password")}
+    post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/login/', data=post_encoded, method='POST')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    response = json.loads(resp_json)
+    if response['valid']:
+        return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator']})
+    else:
+        return JsonResponse({'valid': response['valid'],'result': response['message']})
 
 @csrf_exempt
 def update(request, id):

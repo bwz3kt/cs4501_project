@@ -69,7 +69,28 @@ def signup(request):
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
-        return redirect('/')
+            return response
+
+@csrf_exempt
+def login(request):
+    if request.method == "GET":
+        form = LoginForm()
+        return render(request, "registration/login.html", {'form': form})
+    else:
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            post_data = {'username': request.POST.get("username"), 'password': request.POST.get("password")}
+            post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/v1/login/', data=post_encoded, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            resp = json.loads(resp_json)
+        if resp['valid'] == False:
+            return JsonResponse(resp)
+            #return redirect('/login')
+        else:
+            response = HttpResponseRedirect('/intro/')
+            response.set_cookie("auth", resp['authenticator'])
+            return response
 
 @csrf_exempt
 def update(request, id):
