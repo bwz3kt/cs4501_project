@@ -187,9 +187,12 @@ def delete(request, id):
 def create(request):
     data = {}
     if request.method == "POST":
+        user_id = Authenticator.objects.get(authenticator=request.POST.get('auth')).user_id
+        username = User.objects.get(id=user_id).username
         apt = Apartment()
         apt.name = request.POST.get('name', "")
         apt.price = request.POST.get('price', "")
+        apt.username = username
         apt.save()
         jsondata = [{
             "name": apt.name,
