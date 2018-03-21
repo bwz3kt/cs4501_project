@@ -115,24 +115,29 @@ def login(request):
         else:
             user = User.objects.get(username=request.POST.get('username'))
             if check_password(request.POST.get('password'), user.password):
-                authenticator = Authenticator()
-                authenticator_value = hmac.new(
-                    key=settings.SECRET_KEY.encode('utf-8'),
-                    msg=os.urandom(32),
-                    digestmod='sha256',
-                ).hexdigest()
-                authenticator.authenticator = authenticator_value
-                authenticator.user_id = user.id
-                authenticator.save()
+                if not (Authenticator.objects.all().filter(user_id=user.id).exists()):
+                    authenticator = Authenticator()
+                    authenticator_value = hmac.new(
+                        key=settings.SECRET_KEY.encode('utf-8'),
+                        msg=os.urandom(32),
+                        digestmod='sha256',
+                    ).hexdigest()
+                    authenticator.authenticator = authenticator_value
+                    authenticator.user_id = user.id
+                    authenticator.save()
 
-                jsondata = [{
-                    "username": user.username,
-                    'id': user.id
-                }]
-                data['valid'] = True
-                data['message'] = 'User authenticated.'
-                data['result'] = jsondata
-                data['authenticator'] = authenticator_value
+                    jsondata = [{
+                        "username": user.username,
+                        'id': user.id
+                    }]
+                    data['valid'] = True
+                    data['message'] = 'User authenticated.'
+                    data['result'] = jsondata
+                    data['authenticator'] = authenticator_value
+                else:
+                    data['valid'] = True
+                    data['message'] = 'User is already authenticated.'
+                    data['authenticator'] = Authenticator.objects.get(user_id=user.id).authenticator
             else:
                 data['valid'] = False
                 data['message'] = 'Password incorrect.'
