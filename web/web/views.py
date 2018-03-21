@@ -92,7 +92,8 @@ def signup(request):
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             resp = json.loads(resp_json)
         if resp['valid'] == False:
-            return JsonResponse(resp)
+            #return JsonResponse(resp)
+            return redirect('/signup')
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
@@ -112,8 +113,8 @@ def login(request):
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             resp = json.loads(resp_json)
         if resp['valid'] == False:
-            return JsonResponse(resp)
-            #return redirect('/')
+            #return JsonResponse(resp)
+            return redirect('/')
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
