@@ -16,4 +16,12 @@ As a renter, I should be able to create a new apartment with a name and price.
 
 User Stories for Project 4
 
--TODO
+As a user, I should be able to create an account if the username and email do not already have an associated account
+
+As a user, I should be able to log in, given that my username and password are correct.
+
+As a renter, I should be able to create an apartment listing that has my username associated with it.
+
+As a user, I should not be able to access any pages besides sign up and log in without logging in.
+
+As a renter or tenant, I should be able to see the username of the poster of each individual apartment listing in apartment details

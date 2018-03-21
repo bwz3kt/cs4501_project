@@ -11,6 +11,7 @@ class Apartment(models.Model):
         max_digits=3,
         decimal_places=2
     )
+    username = models.CharField(max_length=100, default="Placeholder")
 
 class User(models.Model):
     username = models.CharField(unique=True, max_length=100)
@@ -19,7 +20,7 @@ class User(models.Model):
 
 class Authenticator(models.Model):
     authenticator = models.CharField(primary_key=True, max_length=100)
-    user_id = models.IntegerField
+    user_id = models.IntegerField(default=1)
     date_created = models.DateField(default=datetime.now)
 
 # class Comment(models.Model):

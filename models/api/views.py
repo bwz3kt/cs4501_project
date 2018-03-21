@@ -142,6 +142,30 @@ def login(request):
     return JsonResponse(data)
 
 @csrf_exempt
+def logout(request):
+    data = {}
+    if not (Authenticator.objects.all().filter(authenticator=request.POST.get('auth')).exists()):
+        data['valid'] = False
+        data['message'] = 'Authenticator does not exist.'
+    else:
+        auth = Authenticator.objects.get(authenticator=request.POST.get('auth'))
+        auth.delete()
+        data['valid'] = True
+        data['message'] = 'Authenticator removed successfully';
+    return JsonResponse(data)
+
+@csrf_exempt
+def auth(request):
+    data = {}
+    if not (Authenticator.objects.all().filter(authenticator=request.POST.get('auth')).exists()):
+        data['valid'] = False
+        data['message'] = 'Authenticator does not exist.'
+    else:
+        data['valid'] = True
+        data['message'] = 'Authenticator exists';
+    return JsonResponse(data)
+
+@csrf_exempt
 def delete(request, id):
     data = {}
     if request.method == "GET":
@@ -163,9 +187,12 @@ def delete(request, id):
 def create(request):
     data = {}
     if request.method == "POST":
+        user_id = Authenticator.objects.get(authenticator=request.POST.get('auth')).user_id
+        username = User.objects.get(id=user_id).username
         apt = Apartment()
         apt.name = request.POST.get('name', "")
         apt.price = request.POST.get('price', "")
+        apt.username = username
         apt.save()
         jsondata = [{
             "name": apt.name,
@@ -201,3 +228,4 @@ def update(request, id):
         data['valid'] = False
         data['message'] = 'Not a POST request.'
     return JsonResponse(data)
+

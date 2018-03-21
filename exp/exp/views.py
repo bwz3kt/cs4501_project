@@ -36,13 +36,15 @@ def get_price_data(request):
 def get_details(request, id):
     template_data = urllib.request.Request('http://models-api:8000/api/v1/item/' + str(id))
     response = urllib.request.urlopen(template_data).read().decode('utf-8')
-    response = json.loads(response)['result']
-
-    return JsonResponse({'result':response})
+    response = json.loads(response)
+    if response['valid'] == True:
+        return JsonResponse({'valid': response['valid'], 'result': response['result']})
+    else:
+        return JsonResponse(response)
 
 @csrf_exempt
 def create(request):
-    post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price")}
+    post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price"), 'auth': request.POST.get('auth')}
     post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
     req = urllib.request.Request('http://models-api:8000/api/v1/create/', data=post_encoded, method='POST')
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
@@ -94,3 +96,21 @@ def delete(request, id):
     response = urllib.request.urlopen(template_data).read().decode('utf-8')
     response = json.loads(response)['message']
     return JsonResponse({'result': response})
+
+@csrf_exempt
+def logout(request):
+    post_data = {'auth': request.POST.get("auth")}
+    post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/logout/', data=post_encoded, method='POST')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    response = json.loads(resp_json)
+    return JsonResponse({'valid': response['valid'], 'result': response['message']})
+
+@csrf_exempt
+def auth(request):
+    post_data = {'auth': request.POST.get("auth")}
+    post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    req = urllib.request.Request('http://models-api:8000/api/v1/auth/', data=post_encoded, method='POST')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    response = json.loads(resp_json)
+    return JsonResponse({'valid': response['valid'], 'result': response['message']})
