@@ -113,4 +113,3 @@ class SortPriceTestCase(TestCase):
             name_list_price.append(apartment.name)
         self.assertEqual(name_list_price, ['f', 'e', 'd', 'c', 'b'])
 
-
