@@ -29,5 +29,5 @@ class Authenticator(models.Model):
 #         default=0,
 #         validators=[MaxValueValidator(5), MinValueValidator(1)]
 #     )
-#     associated_apt = models.ForeignKey('Apartment')
+#     associated_apt = models.ForeignKeyField('Apartment')
 
