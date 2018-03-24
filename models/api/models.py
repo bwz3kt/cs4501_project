@@ -16,7 +16,7 @@ class Apartment(models.Model):
 class User(models.Model):
     username = models.CharField(unique=True, max_length=100)
     password = models.CharField(max_length=100)
-    email = models.CharField(unique=True, max_length=100)
+    email = models.EmailField(unique=True, max_length=100)
 
 class Authenticator(models.Model):
     authenticator = models.CharField(primary_key=True, max_length=100)
