@@ -178,7 +178,7 @@ class LoginTestCase(TestCase):
             "password": "password"
         }
         response = self.client.post(reverse('login'), login_data).json()
-        self.assertEqual(response['message'], 'User authenticated.')
+        self.assertEqual(response['message'],  'User is already authenticated.')
 
     def test_login_invalid_username(self):
         login_data = {
