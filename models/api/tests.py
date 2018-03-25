@@ -1,115 +1,328 @@
 from django.test import TestCase
+from django.test import Client
+from django.core.urlresolvers import reverse
 from .models import Apartment
+from .models import *
+from django.core import management
+from api import urls
+from api import views
+import unittest
+import json
+from django.contrib.auth.hashers import *
+import os
+import hmac
+from django.conf import settings
+
 
 #Tests for Models Layer
 
-#Test for Apartment Model
-class ApartmentTestCase(TestCase):
-    def setUp(self):
-        Apartment.objects.create(name="jpa", price=2000,rating = 3)
-    def test_apartment_name_(self):
-        #name should be jpa
-        jpa = Apartment.objects.get(name="jpa")
-        self.assertEqual(jpa.name, 'jpa')
-    def test_apartment_price_(self):
-        #price should be 2000
-        jpa = Apartment.objects.get(price=2000)
-        self.assertEqual(jpa.price, 2000)
-    def test_apartment_rating_(self):
-        #rating should be 3
-        jpa = Apartment.objects.get(rating=3)
-        self.assertEqual(jpa.rating,3)
+#Test for Create API
+class CreateTestCase(TestCase):
+        # management.call_command('loaddata', 'db.json', verbosity=0)
+        def setUp(self):
+            self.user = User.objects.create(username = "hungryeung", password = make_password("password"), email = "cy4bv@virginia.edu")
+            authenticator_value = hmac.new(
+                key=settings.SECRET_KEY.encode('utf-8'),
+                msg=os.urandom(32),
+                digestmod='sha256',
+            ).hexdigest()
+            self.auth = Authenticator.objects.create(user_id = self.user.id,authenticator=authenticator_value)
 
+        def test_apartment_name_valid(self):
+            data = {
+                "name": "Apartment 8",
+                "price": 999,
+                "auth":self.auth.authenticator
+            }
+            response = self.client.post('/api/v1/create/',data)
+            self.assertEqual(response.status_code,200)
+        #not a valid post request
+        def test_apartment_name_invalid(self):
+            response = self.client.get('/api/v1/create/').json()
+            self.assertEqual(response['valid'], False)
 
-#Test for Update API
-class UpdateTestCase(TestCase):
-    def setUp(self):
-        Apartment.objects.create(name="jpa", price=2700, rating=3)
-    #updating name should be now "jeffcomm" now "jpa"
-    def test_update_name_(self):
-        username_name = Apartment.objects.get(name="jpa")
-        username_name.name= "jeffcomm"
-        self.assertTrue(username_name.name, "jeffcomm")
-    #updating price should be now 900 instead of 2700
-    def test_update_price_(self):
-        username_name = Apartment.objects.get(price=2700)
-        username_name.price= 900
-        self.assertTrue(username_name.price, 900)
-    #updating rating now shoudl be 3.8 instead of 3
-    def test_update_rating_(self):
-        username_name = Apartment.objects.get(rating=3)
-        username_name.rating= 3.8
-        self.assertTrue(username_name.rating,3.8)
-
-#Test for Delete API
+#Testing the Delete API
 class DeleteTestCase(TestCase):
+    # management.call_command('loaddata', 'db.json', verbosity=0)
     def setUp(self):
-        Apartment.objects.create(name="jpa", price=2700, rating=3)
-    #deleted jpa object should now be none after the delete
-    def test_delete_apt_(self):
-        username_name = Apartment.objects.get(name="jpa")
-        username_name.save()
-        username_name.delete()
-        self.assertTrue(username_name,None)
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
 
-#Test for Sorting Function by Rating
-class SortRatingTestCase(TestCase):
+        apt_data = {
+            "name": "Apartment 9",
+            "price": 999,
+            "auth": self.auth.authenticator
+        }
+        response1 = self.client.post('/api/v1/create/', apt_data).json()
+
+    def test_delete_apartment(self):
+        response = self.client.get(reverse('delete', kwargs={'id': 2})).json()
+        self.assertEqual(response['valid'], True)
+    def test_delete_apartment_invalid(self):
+        response = self.client.post(reverse('delete', kwargs={'id': 2})).json()
+        self.assertEqual(response['valid'], False)
+    def test_delete_apartment_invalid_id(self):
+        response = self.client.get(reverse('delete', kwargs={'id': 2})).json()
+        self.assertEqual(response['message'],  'Apartment does not exist.')
+
+
+#Testing the Update API
+
+class UpdateTestCase(TestCase):
+    # management.call_command('loaddata', 'db.json', verbosity=0)
     def setUp(self):
-        Apartment.objects.create(name="a", price=10, rating=0.5)
-        Apartment.objects.create(name="b", price=20, rating=1.5)
-        Apartment.objects.create(name="c", price=30, rating=2.5)
-        Apartment.objects.create(name="d", price=40, rating=3.5)
-        Apartment.objects.create(name="e", price=50, rating=4.5)
-        Apartment.objects.create(name="f", price=60, rating=4.8)
-    # should be sorted in descending order (highest rating first, lowest rating list)
-    # list should be ['f','e','d','c','b'] since that is the order of apartment names after sorting by rating (shows the top five)
-    def test_sort_rating_(self):
-        apt_a = Apartment.objects.get(name="a")
-        apt_a.save()
-        apt_b = Apartment.objects.get(name="b")
-        apt_b.save()
-        apt_c = Apartment.objects.get(name="c")
-        apt_c.save()
-        apt_d = Apartment.objects.get(name="d")
-        apt_d.save()
-        apt_e = Apartment.objects.get(name="e")
-        apt_e.save()
-        apt_f = Apartment.objects.get(name="f")
-        apt_f.save()
-        objects = list(Apartment.objects.all().order_by('-rating')[:5])
-        name_list =[]
-        for apartment in objects:
-            name_list.append(apartment.name)
-        self.assertEqual(name_list, ['f','e','d','c','b'])
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
 
-#Test for Sorting Function by Price
-class SortPriceTestCase(TestCase):
+        apt_data = {
+            "name": "Apartment 10",
+            "price": 999,
+            "auth": self.auth.authenticator
+        }
+        response1 = self.client.post('/api/v1/create/', apt_data).json()
+
+    def test_update_apartment(self):
+        update_data = {
+            "name": "Apartment Updated Name",
+            "price": 1750,
+        }
+        response = self.client.post(reverse('update', kwargs={'id': 3}),update_data).json()
+        self.assertEqual(response['message'], 'Updated the Apartment.')
+
+    def test_update_apartment_invalid(self):
+        response = self.client.get(reverse('update', kwargs={'id': 3})).json()
+        self.assertEqual(response['valid'], False)
+
+#Testing authentication getter view
+class AuthTestCase(TestCase):
     def setUp(self):
-        Apartment.objects.create(name="a", price=60, rating=0.5)
-        Apartment.objects.create(name="b", price=55, rating=1.5)
-        Apartment.objects.create(name="c", price=50, rating=2.5)
-        Apartment.objects.create(name="d", price=45, rating=3.5)
-        Apartment.objects.create(name="e", price=40, rating=4.5)
-        Apartment.objects.create(name="f", price=35, rating=4.8)
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
 
-    # should be sorted in ascending order (lowest price first, highest price last)
-    # list should be ['f','e','d','c','b'] since that is the order of apartment names after sorting by price (shows the top five)
-    def test_sort_price_(self):
-        apt_a = Apartment.objects.get(name="a")
-        apt_a.save()
-        apt_b = Apartment.objects.get(name="b")
-        apt_b.save()
-        apt_c = Apartment.objects.get(name="c")
-        apt_c.save()
-        apt_d = Apartment.objects.get(name="d")
-        apt_d.save()
-        apt_e = Apartment.objects.get(name="e")
-        apt_e.save()
-        apt_f = Apartment.objects.get(name="f")
-        apt_f.save()
-        objects = Apartment.objects.all().order_by('price')[:5]
-        name_list_price = []
-        for apartment in objects:
-            name_list_price.append(apartment.name)
-        self.assertEqual(name_list_price, ['f', 'e', 'd', 'c', 'b'])
+    def test_auth(self):
+        auth_update_data = {
+            "auth": self.auth.authenticator
+        }
+        response = self.client.post(reverse('auth'), auth_update_data).json()
+        self.assertEqual(response['message'], 'Authenticator exists')
+
+    def test_auth_invalid(self):
+        auth_update_data = {
+            "auth": 1
+        }
+        response = self.client.post(reverse('auth'), auth_update_data).json()
+        self.assertEqual(response['valid'], False)
+
+#Tests logout API which should remove the authenticator during logout process (if it exists)
+class LogoutTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
+
+    def test_logout(self):
+        auth_data = {
+            "auth": self.auth.authenticator
+        }
+        response = self.client.post(reverse('logout'), auth_data).json()
+        self.assertEqual(response['message'], 'Authenticator removed successfully')
+
+    #authenticator does not exist should give back an error
+    def test_logout_invalid(self):
+        auth_update_data = {
+            "auth": 1
+        }
+        response = self.client.post(reverse('auth'), auth_update_data).json()
+        self.assertEqual(response['message'],'Authenticator does not exist.')
+
+#Tests Login API which should remove the authenticator during logout process (if it exists)
+class LoginTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
+        self.user.save()
+        self.auth.save()
+
+    def test_login(self):
+        login_data = {
+            "username":"hungryeung",
+            "password": "password"
+        }
+        response = self.client.post(reverse('login'), login_data).json()
+        self.assertEqual(response['message'],  'User is already authenticated.')
+
+    def test_login_invalid_username(self):
+        login_data = {
+            "username":"baduser",
+            "password": "password"
+        }
+        response = self.client.post(reverse('login'), login_data).json()
+        self.assertEqual(response['message'],'Username does not exist.')
+
+    def test_login_invalid_password(self):
+        login_data = {
+            "username": "hungryeung",
+            "password": "badpassword"
+        }
+        response = self.client.post(reverse('login'), login_data).json()
+        self.assertEqual(response['message'], 'Password incorrect.')
+
+    def test_login_invalid_request(self):
+        response = self.client.get(reverse('login')).json()
+        self.assertEqual(response['message'],'Not a POST request.')
+
+#Tests all cases of the signup API
+class SignupTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
+        self.user.save()
+        self.auth.save()
+    def test_signup(self):
+        login_data = {
+            "username": "cyeung",
+            "password":"password",
+            "email":"someemail@virginia.edu"
+        }
+        response = self.client.post(reverse('signup'), login_data).json()
+        self.assertEqual(response['message'], 'Created new User.')
+    def test_signup_invalid(self):
+        response = self.client.get(reverse('signup')).json()
+        self.assertEqual(response['message'], 'Not a POST request.')
+    def test_signup_invalid_username(self):
+        login_data = {
+            "username": "hungryeung",
+            "password": "password",
+            "email": "email@virginia.edu"
+        }
+        response = self.client.post(reverse('signup'), login_data).json()
+        self.assertEqual(response['message'], 'Username already exists.')
+    def test_signup_invalid_email(self):
+        login_data = {
+            "username": "cyeung",
+            "password": "password",
+            "email": "cy4bv@virginia.edu"
+        }
+        response = self.client.post(reverse('signup'), login_data).json()
+        self.assertEqual(response['message'], "Email already has an associated account.")
+
+#Tests getting item api
+class ItemTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
+        self.user.save()
+        self.auth.save()
+        data = {
+            "name": "Chris Apartment",
+            "price": 999,
+            "auth": self.auth.authenticator
+        }
+        response = self.client.post('/api/v1/create/', data)
+    #should get the apartment (valid)
+    def test_item(self):
+        response = self.client.get(reverse('item', kwargs={'id': 5})).json()
+        self.assertEqual(response['valid'],True)
+    #should not get the apartment (invalid id)
+    def test_item_invalid(self):
+        response = self.client.get(reverse('item', kwargs={'id': 300})).json()
+        self.assertEqual(response['message'],'Apartment does not exist.')
+
+#Tests the price_list api which gets the five cheapest apartments
+class getPriceListTestCase(TestCase):
+    def setup(self):
+        self.user = User.objects.create(username="hungryeung", password=make_password("password"),
+                                        email="cy4bv@virginia.edu")
+        authenticator_value = hmac.new(
+            key=settings.SECRET_KEY.encode('utf-8'),
+            msg=os.urandom(32),
+            digestmod='sha256',
+        ).hexdigest()
+        self.auth = Authenticator.objects.create(user_id=self.user.id, authenticator=authenticator_value)
+        self.user.save()
+        self.auth.save()
+        # Apartment.objects.create(name="a", price=10, rating=0.5, auth=self.auth.authenticator)
+        # Apartment.objects.create(name="b", price=20, rating=1.5,auth=self.auth.authenticator)
+        # Apartment.objects.create(name="c", price=30, rating=2.5,auth=self.auth.authenticator)
+        # Apartment.objects.create(name="d", price=40, rating=3.5,auth=self.auth.authenticator)
+        # Apartment.objects.create(name="e", price=50, rating=4.5,auth=self.auth.authenticator)
+        # Apartment.objects.create(name="f", price=60, rating=4.8,auth=self.auth.authenticator)
+    def test_PriceList(self):
+        response = self.client.get('/api/v1/price_list/')
+        self.assertEqual(response.status_code, 200)
+    # def test_PriceList_accurate(self):
+    #     apt_a = Apartment.objects.get(name="a")
+    #     apt_a.save()
+    #     apt_b = Apartment.objects.get(name="b")
+    #     apt_b.save()
+    #     apt_c = Apartment.objects.get(name="c")
+    #     apt_c.save()
+    #     apt_d = Apartment.objects.get(name="d")
+    #     apt_d.save()
+    #     apt_e = Apartment.objects.get(name="e")
+    #     apt_e.save()
+    #     apt_f = Apartment.objects.get(name="f")
+    #     apt_f.save()
+    #     objects = list(Apartment.objects.all().order_by('price')[:5])
+    #     response = self.client.get('/api/v1/price_list/').json()
+    #     name_list = []
+    #     for apartment in response['result']:
+    #         name_list.append(apartment.name)
+    #     print(name_list)
+    #     self.assertEqual(name_list, ['a', 'b', 'c', 'd', 'e'])
+
+#Testing getting the top list (top 5 apartments by rating) api
+class getTopListTestCase(TestCase):
+    def test_Toplist(self):
+        response = self.client.get('/api/v1/top_list/').json()
+        self.assertEqual(response['valid'], True)
+
+#Testing getting the entire (all) apartments list
+class getListTestCase(TestCase):
+    def test_Toplist(self):
+        response = self.client.get('/api/v1/list/').json()
+        self.assertEqual(response['valid'], True)
+
+
 
