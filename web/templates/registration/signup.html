@@ -8,8 +8,9 @@
     <div class="text-left">
         <form method="post">
         {% csrf_token %}
+            <p>{{message}}</p>
         {{ form.as_p }}
-        <button type="submit">Sign up</button> <a href="/api/auth/login" class="btn"> Already have an account? </a>
+        <button type="submit">Sign up</button> <a href="/home" class="btn"> Already have an account? </a>
       </form>
     </div>
 </div>

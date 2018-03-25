@@ -194,6 +194,11 @@ def create(request):
     if request.method == "POST":
         user_id = Authenticator.objects.get(authenticator=request.POST.get('auth')).user_id
         username = User.objects.get(id=user_id).username
+        #checking if name already exists in database; no duplicate apartment posts allowed
+        # if Apartment.objects.all().filter(name=request.POST.get('name')).exists():
+        #     data['valid'] = False
+        #     data['message'] = 'Apartment name already exists.  No duplicate entries are allowed.'
+        # else:
         apt = Apartment()
         apt.name = request.POST.get('name', "")
         apt.price = request.POST.get('price', "")

@@ -67,7 +67,7 @@ def intro(request):
 def create(request):
     if request.method == "GET":
         form = CreateForm()
-        return render(request, "myapp/create.html", {'form': form})
+        return render(request, "myapp/create.html", {'form': form, 'message': ""})
     else:
         form = CreateForm(request.POST)
         if form.is_valid():
@@ -75,14 +75,23 @@ def create(request):
             post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
             req = urllib.request.Request('http://exp-api:8000/v1/create/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-            # resp = json.loads(resp_json)
-        return redirect('/home')
+        #     resp = json.loads(resp_json)
+        #     print(resp)
+        # #If valid is false, this means we have a duplicate name being entered.
+        #     if resp['result'] == ('Apartment name already exists.  No duplicate entries are allowed.'):
+        #     #    return render(request, "myapp/create.html", {'form': form, 'message': 'Cannot create apartment.  Apartment name already exists.'})
+        #         #return JsonResponse(resp)
+        #         empty_form = LoginForm()
+        #         return render(request, "myapp/create.html", {'form': empty_form, 'message': resp['result']})
+        #     #return redirect('/')
+        #     else:
+            return redirect('/home')
 
 @csrf_exempt
 def signup(request):
     if request.method == "GET":
         form = SignupForm()
-        return render(request, "registration/signup.html", {'form': form})
+        return render(request, "registration/signup.html", {'form': form, 'message': ""})
     else:
         form = SignupForm(request.POST)
         if form.is_valid():
@@ -91,9 +100,15 @@ def signup(request):
             req = urllib.request.Request('http://exp-api:8000/v1/signup/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             resp = json.loads(resp_json)
+
+
+
         if resp['valid'] == False:
             #return JsonResponse(resp)
-            return redirect('/signup')
+            empty_form = SignupForm()
+            return render(request, "registration/signup.html", {'form': empty_form, 'message': resp['result']})
+            #return redirect(request, '/signup', {'form': empty_form, 'message': resp['result']})
+
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
@@ -103,7 +118,7 @@ def signup(request):
 def login(request):
     if request.method == "GET":
         form = LoginForm()
-        return render(request, "registration/login.html", {'form': form})
+        return render(request, "registration/login.html", {'form': form, 'message': ""})
     else:
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -114,7 +129,9 @@ def login(request):
             resp = json.loads(resp_json)
         if resp['valid'] == False:
             #return JsonResponse(resp)
-            return redirect('/')
+            empty_form = LoginForm()
+            return render(request, "registration/login.html", {'form': empty_form, 'message': resp['result']})
+            #return redirect('/')
         else:
             response = HttpResponseRedirect('/intro/')
             response.set_cookie("auth", resp['authenticator'])
@@ -177,6 +194,7 @@ def logout(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     resp = json.loads(resp_json)
     if resp['valid'] == False:
+
         return redirect('/home')
         #return JsonResponse(resp)
     else:
