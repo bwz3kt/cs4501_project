@@ -20,8 +20,14 @@ As a user, I should be able to create an account if the username and email do no
 
 As a user, I should be able to log in, given that my username and password are correct.
 
-As a renter, I should be able to create an apartment listing that has my username associated with it.
+As a renter, I should be able to create an apartment listing that has my username associated with it. 
+(Currently, name is not unique because multiple apartments may have the same name, so it is allowed 
+to create multiple apartments of the same name. Later on, city, address, and apartment number will 
+be added and those fields combined will be unique.)
 
 As a user, I should not be able to access any pages besides sign up and log in without logging in.
 
 As a renter or tenant, I should be able to see the username of the poster of each individual apartment listing in apartment details
+
+User Stories for Project 5
+
