@@ -63,15 +63,15 @@ def search(request):
 
     es = Elasticsearch(['es'])
 
-    result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 5})
+    # result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 5})
+    #
+    # if result['timed_out'] == True:
+    #     response = {'valid': False, 'message': 'Search timed out'}
+    #     return JsonResponse(response)
 
-    if result['timed_out'] == True:
-        response = {'valid': False, 'message': 'Search timed out'}
-        return JsonResponse(response)
-    context = {}
     sources = []
-    for returned in result['hits']['hits']:
-        sources.append(returned['_source'])
+    # for returned in result['hits']['hits']:
+    #     sources.append(returned['_source'])
 
     response = {'valid': True, 'result': sources}
     return JsonResponse(response)
