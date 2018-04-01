@@ -52,11 +52,9 @@ def create(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(resp_json)
     if response['valid'] == True:
-        created = response['result']
-        producer = KafkaProducer(bootstrap_servers='kafka:9092')
-        new_listing = {'name': created['name'], 'price': created['price'],
-                       'id': created['id'], 'username': created['username']}
-        producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
+        #producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        new_listing = response['result']
+        #producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
     return JsonResponse({'result': response['message']})
 
 @csrf_exempt
@@ -65,15 +63,15 @@ def search(request):
 
     es = Elasticsearch(['es'])
 
-    result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 5})
+    # result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 5})
+    #
+    # if result['timed_out'] == True:
+    #     response = {'valid': False, 'message': 'Search timed out'}
+    #     return JsonResponse(response)
 
-    if result['timed_out'] == True:
-        response = {'valid': False, 'message': 'Search timed out'}
-        return JsonResponse(response)
-    context = {}
     sources = []
-    for returned in result['hits']['hits']:
-        sources.append(returned['_source'])
+    # for returned in result['hits']['hits']:
+    #     sources.append(returned['_source'])
 
     response = {'valid': True, 'result': sources}
     return JsonResponse(response)
