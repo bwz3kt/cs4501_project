@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^update/(?P<id>[0-9]+)/$', views.update, name='update'),
     #url(r'^comment/(?P<id>[0-9]+)/$', views.update, name='update'),
     url(r'^create/', views.create, name='create'),
+    url(r'^search/', views.search, name='search'),
     url(r'^top/', views.top, name='top'),
     url(r'^signup/', views.signup, name='signup'),
     url(r'^logout/', views.logout, name='logout'),

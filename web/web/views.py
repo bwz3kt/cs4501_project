@@ -87,6 +87,26 @@ def create(request):
         #     else:
             return redirect('/home')
 
+@login_required
+@csrf_exempt
+def search(request):
+    if request.method == 'GET':
+        form = SearchForm()
+        return render(request, "myapp/search.html", {'form': form, "message": ""})
+    else:
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            post_data = {'query': form.cleaned_data['query']}
+            post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/v1/search/', data=post_encoded, method='POST')
+            resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+            resp = json.loads(resp_json)
+        if resp['valid'] == False:
+            return render(request, "myapp/search.html", {"form": form, 'message': resp['message']})
+        else:
+            empty_form = SearchForm()
+            return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['results']})
+
 @csrf_exempt
 def signup(request):
     if request.method == "GET":

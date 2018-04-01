@@ -208,6 +208,7 @@ def create(request):
             "name": apt.name,
             'id': apt.id,
             'price': apt.price,
+            'username': apt.username,
         }]
         data['valid'] = True
         data['message'] = 'Created new Apartment.'
