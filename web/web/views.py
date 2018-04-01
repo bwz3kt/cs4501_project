@@ -105,7 +105,7 @@ def search(request):
             return render(request, "myapp/search.html", {"form": form, 'message': resp['message']})
         else:
             empty_form = SearchForm()
-            return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['results']})
+            return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['result']})
 
 @csrf_exempt
 def signup(request):
