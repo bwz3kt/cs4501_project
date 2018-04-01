@@ -44,8 +44,8 @@ es:
    container_name: es
    ports:
       - "9200:9200"
-<<<<<<< HEAD
-=======
+
+
 
 batch:
    image: tp33/django
@@ -57,4 +57,3 @@ batch:
       - .:/app
    command: bash -c "python /app/batch/script.py"
 
->>>>>>> b7ee9c2f7967ef467735ca670926ebbc3cbe645c
