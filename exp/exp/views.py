@@ -52,11 +52,9 @@ def create(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(resp_json)
     if response['valid'] == True:
-        created = response['result']
-        producer = KafkaProducer(bootstrap_servers='kafka:9092')
-        new_listing = {'name': created['name'], 'price': created['price'],
-                       'id': created['id'], 'username': created['username']}
-        producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
+        #producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        new_listing = response['result']
+        #producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
     return JsonResponse({'result': response['message']})
 
 @csrf_exempt
