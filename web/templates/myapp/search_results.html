@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2 text-center gtco-heading">
+    <div class="col-md-8 col-md-offset-2">
+        <h3>Results List</h3>
+    </div>
+    <div>
+      <table class="table table-striped" style="table-layout:fixed">
+        <thead>
+        <tr>
+          <th>Apartment ID
+          <th>Apartment Name
+          <th>Apartment Price
+          <th>Apartment Rating
+          <th>Edit Apartment
+          <th>Delete Apartment
+        </tr>
+        </thead>
+        {% for object in objects %}
+        <tbody>
+        <tr>
+          <td>{{object.id}}</td>
+          <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
+          <td>{{object.price}}</td>
+          <td>{{object.rating}}/5</td>
+          <td><a href="/update/{{object.id}}">Edit Apartment</a></td>
+          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>
+        </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+      <a href="/create" class="btn">Create New Apartment</a>
+    </div>
+</div>
+{% endblock %}
