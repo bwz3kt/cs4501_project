@@ -52,9 +52,9 @@ def create(request):
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(resp_json)
     if response['valid'] == True:
-        #producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
         new_listing = response['result']
-        #producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
+        producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
     return JsonResponse({'result': response['message']})
 
 @csrf_exempt
@@ -62,18 +62,19 @@ def search(request):
     query = request.POST.get('query')
 
     es = Elasticsearch(['es'])
+    result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
 
-    # result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 5})
-    #
-    # if result['timed_out'] == True:
-    #     response = {'valid': False, 'message': 'Search timed out'}
-    #     return JsonResponse(response)
+    if result['timed_out'] == True:
+        response = {'valid': False, 'message': 'Search timed out'}
+        return JsonResponse(response)
 
-    sources = []
-    # for returned in result['hits']['hits']:
-    #     sources.append(returned['_source'])
+    apts = []
+    for element in result['hits']['hits']:
+        apts.append(element['_source'])
+        #apts.append(element)
 
-    response = {'valid': True, 'result': sources}
+    apts.sort(key=lambda x: x['id'])
+    response = {'valid': True, 'result': apts}
     return JsonResponse(response)
 
 @csrf_exempt
