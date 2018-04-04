@@ -13,8 +13,7 @@
           <th>Apartment Name
           <th>Apartment Price
           <th>Apartment Rating
-          <th>Edit Apartment
-          <th>Delete Apartment
+          <th>Apartment Owner
         </tr>
         </thead>
         {% for object in objects %}
@@ -24,8 +23,9 @@
           <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
           <td>{{object.price}}</td>
           <td>{{object.rating}}/5</td>
-          <td><a href="/update/{{object.id}}">Edit Apartment</a></td>
-          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>
+          <td>{{object.username}}</td>
+          <!--<td><a href="/update/{{object.id}}">Edit Apartment</a></td>
+          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>-->
         </tr>
         </tbody>
         {% endfor %}

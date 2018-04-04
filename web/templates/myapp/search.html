@@ -3,12 +3,15 @@
 {% block content %}
 <div class="col-md-8 col-md-offset-2 text-center gtco-heading">
     <h3>Search for Apartments</h3>
-    <form method="post">
+    <form method="post" >
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Search</button>
     </form>
     {% if objects != None %}
+    <br>
+    <br>
+
     <div class="col-md-8 col-md-offset-2">
         <h3>Results List</h3>
     </div>
@@ -20,8 +23,7 @@
           <th>Apartment Name
           <th>Apartment Price
           <th>Apartment Rating
-          <th>Edit Apartment
-          <th>Delete Apartment
+          <th>Apartment Owner
         </tr>
         </thead>
         {% for object in objects %}
@@ -31,8 +33,9 @@
           <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
           <td>{{object.price}}</td>
           <td>{{object.rating}}/5</td>
-          <td><a href="/update/{{object.id}}">Edit Apartment</a></td>
-          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>
+          <td>{{object.username}}</td>
+          <!--<td><a href="/update/{{object.id}}">Edit Apartment</a></td>
+          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>-->
         </tr>
         </tbody>
         {% endfor %}
