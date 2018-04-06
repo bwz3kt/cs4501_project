@@ -94,7 +94,7 @@ def signup(request):
 
             jsondata = [{
                 "username": user.username,
-                'id': user.id
+                'email': user.email
             }]
             data['valid'] = True
             data['message'] = 'Created new User.'

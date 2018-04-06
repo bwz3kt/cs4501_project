@@ -96,7 +96,7 @@ def search(request):
     else:
         form = SearchForm(request.POST)
         if form.is_valid():
-            post_data = {'query': form.cleaned_data['query']}
+            post_data = {'query': form.cleaned_data['query'], 'user': form.cleaned_data['user']}
             post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
             req = urllib.request.Request('http://exp-api:8000/v1/search/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
@@ -105,7 +105,7 @@ def search(request):
             return render(request, "myapp/search.html", {"form": form, 'message': resp['message']})
         else:
             empty_form = SearchForm()
-            return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['result']})
+            return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['result'], "user": form.cleaned_data['user']})
             #return render(request, "myapp/search_results.html", {"objects": resp['result']})
 
 @csrf_exempt
@@ -121,8 +121,6 @@ def signup(request):
             req = urllib.request.Request('http://exp-api:8000/v1/signup/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             resp = json.loads(resp_json)
-
-
 
         if resp['valid'] == False:
             #return JsonResponse(resp)
