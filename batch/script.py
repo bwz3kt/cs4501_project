@@ -15,6 +15,7 @@ fixtures = [{"name": "Apartment 1", "price": 750, "rating": "3.50", "username": 
             {"name": "Apartment 7", "price": 2500, "rating": "1.50", "username": "bradyw7", "id": 7}, {"name": "Apartment 8", "price": 2384, "rating": "0.75", "username": "bradyw7", "id": 8}]
 for apartment in fixtures:
     es.index(index='listing_index', doc_type='listing', id=apartment['id'], body=apartment)
+    #es.index(index='listing_index', doc_type='username', id=apartment['username'], body =apartment)
     es.indices.refresh(index="listing_index")
 print("Fixtures Loaded.")
 
@@ -23,4 +24,5 @@ for message in consumer:
     new_listing = json.loads((message.value).decode('utf-8'))[0]
     print(new_listing)
     es.index(index='listing_index', doc_type='listing', id=new_listing['id'], body=new_listing)
+    #es.index(index='listing_index', doc_type='username', id=new_listing['username'], body=new_listing)
     es.indices.refresh(index="listing_index")

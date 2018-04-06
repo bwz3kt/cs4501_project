@@ -47,8 +47,6 @@ es:
    ports:
       - "9200:9200"
 
-
-
 batch:
    image: tp33/django
    container_name: batch
