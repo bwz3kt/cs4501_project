@@ -16,11 +16,31 @@ fixtures = [{"name": "Apartment 1", "price": 750, "rating": "3.50", "username": 
 for apartment in fixtures:
     es.index(index='listing_index', doc_type='listing', id=apartment['id'], body=apartment)
     es.indices.refresh(index="listing_index")
-print("Fixtures Loaded.")
+print("Apartment Fixtures Loaded.")
 
+# user_consumer = KafkaConsumer('user-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
+users_fixtures = [{"username": "cyeung", "email": "cy4bv@virginia.edu"},
+  {"username": "tk9at", "email": "tk9at@virginia.edu"},
+  {"username": "bradyw7", "email": "bwz3kt@virginia.edu"}]
+
+for user in users_fixtures:
+    es.index(index='user_index', doc_type='listing', body=user)
+    es.indices.refresh(index="user_index")
+print("User Fixtures Loaded.")
 
 for message in consumer:
     new_listing = json.loads((message.value).decode('utf-8'))[0]
     print(new_listing)
-    es.index(index='listing_index', doc_type='listing', id=new_listing['id'], body=new_listing)
-    es.indices.refresh(index="listing_index")
+    if new_listing['email']:
+        es.index(index='user_index', doc_type='listing', body=new_listing)
+        es.indices.refresh(index="user_index")
+    else:
+        es.index(index='listing_index', doc_type='listing', id=new_listing['id'], body=new_listing)
+        es.indices.refresh(index="listing_index")
+
+# for message in user_consumer:
+#     new_listing = json.loads((message.value).decode('utf-8'))[0]
+#     print(new_listing)
+#     es.index(index='user_index', doc_type='listing', body=new_listing)
+#     es.indices.refresh(index="user_index")
+#

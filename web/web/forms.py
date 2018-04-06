@@ -24,6 +24,7 @@ class LoginForm(forms.Form):
 
 class SearchForm(forms.Form):
     query = forms.CharField(max_length = 100, required=True, label='Search')
+    user = forms.BooleanField(required=False, label='Search for User')
 
 
 

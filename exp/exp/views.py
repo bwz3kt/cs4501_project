@@ -60,21 +60,27 @@ def create(request):
 @csrf_exempt
 def search(request):
     query = request.POST.get('query')
-
     es = Elasticsearch(['es'])
-    result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
+
+    if request.POST.get('user'):
+        result = es.search(index='user_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
+    else:
+        result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
 
     if result['timed_out'] == True:
         response = {'valid': False, 'message': 'Search timed out'}
         return JsonResponse(response)
 
-    apts = []
+    objs = []
     for element in result['hits']['hits']:
-        apts.append(element['_source'])
+        objs.append(element['_source'])
         #apts.append(element)
 
-    apts.sort(key=lambda x: x['id'])
-    response = {'valid': True, 'result': apts}
+    if request.POST.get('user'):
+        objs.sort(key=lambda x: x['username'])
+    else:
+        objs.sort(key=lambda x: x['id'])
+    response = {'valid': True, 'result': objs}
     return JsonResponse(response)
 
 @csrf_exempt
@@ -90,7 +96,12 @@ def signup(request):
     else:
         return JsonResponse({'valid': False, 'result': "Passwords do not match"})
     if response['valid']:
-        return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator']})
+        print("USER CREATEDDSGLADJKGJADSKGAJDSLGAJDSKLGADS")
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        new_listing = response['result']
+        producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
+
+        return JsonResponse({'valid': response['valid'],'result': response['message'], 'authenticator':response['authenticator'], 'obj': response['result']})
     else:
         return JsonResponse({'valid': response['valid'],'result': response['message']})
 
