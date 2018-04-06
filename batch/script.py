@@ -32,11 +32,11 @@ print("User Fixtures Loaded.")
 for message in consumer:
     new_listing = json.loads((message.value).decode('utf-8'))[0]
     print(new_listing)
-<<<<<<< HEAD
+
     es.index(index='listing_index', doc_type='listing', id=new_listing['id'], body=new_listing)
     #es.index(index='listing_index', doc_type='username', id=new_listing['username'], body=new_listing)
     es.indices.refresh(index="listing_index")
-=======
+
     if new_listing['email']:
         es.index(index='user_index', doc_type='listing', body=new_listing)
         es.indices.refresh(index="user_index")
@@ -50,4 +50,4 @@ for message in consumer:
 #     es.index(index='user_index', doc_type='listing', body=new_listing)
 #     es.indices.refresh(index="user_index")
 #
->>>>>>> 10d142cf5f01b2489315c33cb8899e40dd077a58
+
