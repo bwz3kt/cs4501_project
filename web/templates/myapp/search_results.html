@@ -2,16 +2,6 @@
 
 {% block content %}
 <div class="col-md-8 col-md-offset-2 text-center gtco-heading">
-    <h3>Search for Apartments</h3>
-    <form method="post" >
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Search</button>
-    </form>
-    {% if objects != None %}
-    <br>
-    <br>
-
     <div class="col-md-8 col-md-offset-2">
         <h3>Results List</h3>
     </div>
@@ -42,6 +32,5 @@
       </table>
       <a href="/create" class="btn">Create New Apartment</a>
     </div>
-    {% endif %}
 </div>
 {% endblock %}
