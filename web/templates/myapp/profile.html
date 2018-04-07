@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2 text-center gtco-heading">
+    <h3>Username: {{user.username}}</h3>
+    <p>Email: {{user.email}}</p>
+    <br>
+    <h3>Apartments Owned by {{user.username}}</h3>
+    <div>
+      <table class="table table-striped" style="table-layout:fixed">
+        <thead>
+        <tr>
+          <th>Apartment ID
+          <th>Apartment Name
+          <th>Apartment Price
+          <th>Apartment Rating
+        </tr>
+        </thead>
+        {% for object in objects %}
+        <tbody>
+        <tr>
+          <td>{{object.id}}</td>
+          <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
+          <td>{{object.price}}</td>
+          <td>{{object.rating}}/5</td>
+        </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+    </div>
+    <!--
+    <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+              <th>Comment Number</th>
+              <th>Rating</th>
+              <th>Comment</th>
+            </tr>
+            </thead>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{comment.rating}}</td>
+                <td>{{comment.comment}}</td>
+            </tr>
+            {% endfor %}
+    </table>
+    <a href="/comment/{{apartment.id}}">Comment</a>-->
+</div>
+{% endblock %}

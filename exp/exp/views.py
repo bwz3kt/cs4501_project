@@ -45,6 +45,16 @@ def get_details(request, id):
         return JsonResponse(response)
 
 @csrf_exempt
+def profile(request, username):
+    template_data = urllib.request.Request('http://models-api:8000/api/v1/profile/' + str(username))
+    response = urllib.request.urlopen(template_data).read().decode('utf-8')
+    response = json.loads(response)
+    # if response['valid'] == True:
+    #     return JsonResponse({'valid': response['valid'], 'result': response['result'], 'user': response['user']})
+    # else:
+    return JsonResponse(response)
+
+@csrf_exempt
 def create(request):
     post_data = {'name': request.POST.get("name"), 'price': request.POST.get("price"), 'auth': request.POST.get('auth')}
     post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')

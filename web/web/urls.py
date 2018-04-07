@@ -21,6 +21,7 @@ from . import views
 
 urlpatterns = [
     url(r'^details/(?P<id>[0-9]+)/$', views.details, name='details'),
+    url(r'^profile/(?P<username>\w{0,50})/$', views.profile, name='profile'),
     url(r'^delete/(?P<id>[0-9]+)/$', views.delete, name='delete'),
     url(r'^update/(?P<id>[0-9]+)/$', views.update, name='update'),
     #url(r'^comment/(?P<id>[0-9]+)/$', views.update, name='update'),

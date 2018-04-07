@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'v1/delete/(?P<id>[0-9]+)/$', views.delete, name='delete'),
     url(r'v1/update/(?P<id>[0-9]+)/$', views.update, name='update'),
     url(r'v1/item/(?P<id>[0-9]+)/$', views.item, name='item'),
+    url(r'v1/profile/(?P<username>\w{0,50})/$', views.profile, name='profile'),
 ]

@@ -28,7 +28,7 @@
             {% for object in objects %}
             <tbody>
             <tr>
-              <td>{{object.username}}</td>
+              <td><a href="/profile/{{object.username}}">{{object.username}}</a></td>
               <td>{{object.email}}</td>
               <!--<td><a href="/update/{{object.id}}">Edit Apartment</a></td>
               <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>-->
@@ -56,7 +56,7 @@
               <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
               <td>{{object.price}}</td>
               <td>{{object.rating}}/5</td>
-              <td>{{object.username}}</td>
+              <td><a href="/profile/{{object.username}}">{{object.username}}</a></td>
               <!--<td><a href="/update/{{object.id}}">Edit Apartment</a></td>
               <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>-->
             </tr>

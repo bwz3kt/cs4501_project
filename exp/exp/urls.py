@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^v1/logout/', views.logout, name='logout'),
     url(r'^v1/auth/', views.auth, name='auth'),
     url(r'^v1/get_details/(?P<id>[0-9]+)/$', views.get_details, name='get_details'),
+    url(r'^v1/profile/(?P<username>\w{0,50})/$', views.profile, name='profile'),
     url(r'^v1/home/', views.get_data, name='index'),
     url(r'^v1/top/', views.get_top_data, name='top'),
     url(r'^v1/price/', views.get_price_data, name='price'),

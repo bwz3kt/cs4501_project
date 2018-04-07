@@ -66,6 +66,24 @@ def item(request, id):
     return JsonResponse(data)
 
 @csrf_exempt
+def profile(request, username):
+    data = {}
+    if User.objects.all().filter(username=username).exists():
+        apts = Apartment.objects.all().filter(username=username).values()
+        user = {}
+        user['username'] = username
+        user['email'] = User.objects.get(username=username).email
+        data = {}
+        data['valid'] = True
+        data['user'] = user
+        data['result'] = list(apts)
+        print(data['result'])
+    else:
+        data['valid'] = False
+        data['message'] = 'Apartment does not exist.'
+    return JsonResponse(data)
+
+@csrf_exempt
 def signup(request):
     data = {}
     if request.method == "POST":
