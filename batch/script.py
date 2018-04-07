@@ -4,8 +4,9 @@ from kafka import KafkaConsumer
 import time
 import json
 
-time.sleep(15)
 print("Batch Script Running")
+time.sleep(10)
+
 consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
 es = Elasticsearch(['es'])
 
@@ -32,12 +33,16 @@ print("User Fixtures Loaded.")
 for message in consumer:
     new_listing = json.loads((message.value).decode('utf-8'))[0]
     print(new_listing)
+<<<<<<< HEAD
 
     es.index(index='listing_index', doc_type='listing', id=new_listing['id'], body=new_listing)
     #es.index(index='listing_index', doc_type='username', id=new_listing['username'], body=new_listing)
     es.indices.refresh(index="listing_index")
 
     if new_listing['email']:
+=======
+    if 'email' in new_listing:
+>>>>>>> 0497de14dd4c58e9dfd77543e13417983f7e4361
         es.index(index='user_index', doc_type='listing', body=new_listing)
         es.indices.refresh(index="user_index")
     else:

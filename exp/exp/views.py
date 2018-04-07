@@ -62,7 +62,7 @@ def search(request):
     query = request.POST.get('query')
     es = Elasticsearch(['es'])
 
-    if request.POST.get('user'):
+    if request.POST.get('user') == 'True':
         result = es.search(index='user_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
     else:
         result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
@@ -74,13 +74,12 @@ def search(request):
     objs = []
     for element in result['hits']['hits']:
         objs.append(element['_source'])
-        #apts.append(element)
 
     if request.POST.get('user'):
         objs.sort(key=lambda x: x['username'])
     else:
         objs.sort(key=lambda x: x['id'])
-    response = {'valid': True, 'result': objs}
+    response = {'valid': True, 'result': objs, 'user': request.POST.get('user')}
     return JsonResponse(response)
 
 @csrf_exempt
