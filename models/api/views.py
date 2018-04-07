@@ -84,6 +84,31 @@ def profile(request, username):
     return JsonResponse(data)
 
 @csrf_exempt
+def user_profile(request):
+    data = {}
+    auth = request.POST.get('auth')
+    if Authenticator.objects.all().filter(authenticator=auth).exists():
+        user_id = Authenticator.objects.get(authenticator=auth).user_id
+        if User.objects.all().filter(id=user_id).exists():
+            user = User.objects.get(id=user_id)
+            apts = Apartment.objects.all().filter(username=user.username).values()
+            user_data = {}
+            user_data['username'] = user.username
+            user_data['email'] = user.email
+            data = {}
+            data['valid'] = True
+            data['user'] = user_data
+            data['result'] = list(apts)
+            print(data['result'])
+        else:
+            data['valid'] = False
+            data['message'] = 'Apartment does not exist.'
+    else:
+        data['valid'] = False
+        data['message'] = 'Authenticator invalid.'
+    return JsonResponse(data)
+
+@csrf_exempt
 def signup(request):
     data = {}
     if request.method == "POST":

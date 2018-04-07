@@ -209,6 +209,20 @@ def profile(request, username):
 
 @login_required
 @csrf_exempt
+def user_profile(request):
+    post_data = {'auth': request.COOKIES.get('auth')}
+    post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
+    req = urllib.request.Request('http://exp-api:8000/v1/user_profile/', data=post_encoded, method='POST')
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    resp = json.loads(resp_json)
+    if resp['valid'] == True:
+        return render(request, 'myapp/user_profile.html', {'user':resp['user'], 'objects': resp['result']})
+    else:
+        #return JsonResponse(resp)
+        return redirect('/home')
+
+@login_required
+@csrf_exempt
 def delete(request, id):
     req = urllib.request.Request('http://exp-api:8000/v1/delete/' + str(id))
     resp_json = urllib.request.urlopen(req).read().decode('utf-8')

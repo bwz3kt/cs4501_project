@@ -5,7 +5,7 @@
     <h3>Username: {{user.username}}</h3>
     <p>Email: {{user.email}}</p>
     <br>
-    <h4>Apartments Owned by {{user.username}}</h4>
+    <h4>Your Apartments</h4>
     <div>
       <table class="table table-striped" style="table-layout:fixed">
         <thead>
@@ -14,6 +14,8 @@
           <th>Apartment Name
           <th>Apartment Price
           <th>Apartment Rating
+            <th>Edit Apartment
+          <th>Delete Apartment
         </tr>
         </thead>
         {% for object in objects %}
@@ -23,6 +25,8 @@
           <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
           <td>{{object.price}}</td>
           <td>{{object.rating}}/5</td>
+            <td><a href="/update/{{object.id}}">Edit Apartment</a></td>
+          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>
         </tr>
         </tbody>
         {% endfor %}
