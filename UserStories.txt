@@ -31,3 +31,15 @@ As a renter or tenant, I should be able to see the username of the poster of eac
 
 User Stories for Project 5
 
+As a user, I should be able to search apartments and see the list of apartments returned in the same page as the search page.
+
+As a user, I should be able to search for other users and see the list of users returned in the same page as the search page.
+
+As an apartment owner, I should be able to see a list of my own apartments, which is the only location to delete and edit apartments.
+
+As a user, I should be able to filter apartment search by fields like ID, price, and name.
+
+As a user, I should be able to press a user profile link and see all apartments owned by the user.
+
+
+
