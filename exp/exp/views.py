@@ -85,20 +85,21 @@ def search(request):
     query = request.POST.get('query')
     es = Elasticsearch(['es'])
     objs = []
+    #Make a shallow copy to the post data; delete query and user form fields such that only filter form data is left
     post_copy = copy.copy(request.POST)
     del post_copy['query']
     del post_copy['user']
     filters=[]
-    keys=[]
-    values=[]
     for key, value in post_copy.items():
-        print(post_copy[key])
-        print(key)
-        values.append(post_copy[key])
-        keys.append(key)
         if post_copy[key] == 'True':
             filters.append(key)
-    print(filters)
+    # if ("/" in request.POST.get('query')) or ("\\" in request.POST.get('query')), this is an invalid query.
+    # These characters lead to data type issues and should not be part of a valid query.
+    if ("\\" in request.POST.get('query')) or ("/" in request.POST.get('query')):
+        response = {'valid': False,
+                    'message':
+                    'Error. Invalid Search query.  Query should not contain forward slashes or back slashes.'}
+        return JsonResponse(response)
     if request.POST.get('user') == 'True':
         result = es.search(index='user_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
     # else:
@@ -113,7 +114,7 @@ def search(request):
             response = {'valid': False,
                         'message': 'Error.  Data type conflict.  Query is a string but id and price filters only accept numbers.'}
             return JsonResponse(response)
-        #else, just use the filters normally and make sure that for the filters that are checked, they match the query
+        #Else, just use the filters normally and make sure that for the filters that are checked, they match the query
         result = es.search(index='listing_index', body={'query': {'query_string': {"fields":filters,'query': query}},'size': 10})
     if result['timed_out'] == True:
         response = {'valid': False, 'message': 'Search timed out'}
