@@ -126,8 +126,7 @@ def search(request):
         objs.sort(key=lambda x: x['username'])
     else:
         objs.sort(key=lambda x: x['id'])
-    response = {'valid': True, 'result': objs, 'user': request.POST.get('user'), 'postcopy':post_copy, 'filters': filters,'values':values,
-                'keys':keys}
+    response = {'valid': True, 'result': objs, 'user': request.POST.get('user')}
     return JsonResponse(response)
 
 @csrf_exempt
