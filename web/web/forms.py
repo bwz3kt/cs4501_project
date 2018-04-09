@@ -25,6 +25,11 @@ class LoginForm(forms.Form):
 class SearchForm(forms.Form):
     query = forms.CharField(max_length = 100, required=True, label='Search')
     user = forms.BooleanField(required=False, label='Search for User')
+    id = forms.BooleanField(required=False, label='Filter by Apartment ID')
+    name = forms.BooleanField(required=False, label='Filter by Apartment Name')
+    price = forms.BooleanField(required=False, label='Filter by Apartment Price')
+
+
 
 
 

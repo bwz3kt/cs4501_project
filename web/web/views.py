@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from .forms import *
+import copy
 import json
 import urllib.request
 import urllib.parse
@@ -96,15 +97,27 @@ def search(request):
     else:
         form = SearchForm(request.POST)
         if form.is_valid():
-            post_data = {'query': form.cleaned_data['query'], 'user': form.cleaned_data['user']}
+            #Create filters array; copy form.cleaned_data and delete query and user as to only go through filters
+            # filters =[]
+            # form_copy = copy.copy(form.cleaned_data) #shallow copy so we have a copied dict
+            # del(form_copy['query'])
+            # del(form_copy['user'])
+            # print(form_copy)
+            # for key,value in form_copy.items():
+            #     if form_copy[key] == True:
+            #         filters.append(key)
+            # print(filters)
+            post_data = {'query': form.cleaned_data['query'], 'user': form.cleaned_data['user'],'name':form.cleaned_data['name'], 'id': form.cleaned_data['id'],
+                         'price': form.cleaned_data['price']}
             post_encoded = urllib.parse.urlencode(post_data).encode('utf-8')
             req = urllib.request.Request('http://exp-api:8000/v1/search/', data=post_encoded, method='POST')
             resp_json = urllib.request.urlopen(req).read().decode('utf-8')
             resp = json.loads(resp_json)
+        empty_form = SearchForm()
         if resp['valid'] == False:
-            return render(request, "myapp/search.html", {"form": form, 'message': resp['message']})
+            return render(request, "myapp/search.html", {"form": empty_form, 'message': resp['message']})
         else:
-            empty_form = SearchForm()
+            print(resp['result'])
             return render(request, "myapp/search.html", {"form": empty_form, "objects": resp['result'], "user": form.cleaned_data['user']})
             #return render(request, "myapp/search_results.html", {"objects": resp['result']})
 

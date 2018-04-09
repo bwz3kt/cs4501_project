@@ -7,6 +7,7 @@ from django.contrib.auth import hashers
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.hashers import *
 from kafka import KafkaProducer
+import copy
 from elasticsearch import Elasticsearch
 
 
@@ -83,25 +84,50 @@ def create(request):
 def search(request):
     query = request.POST.get('query')
     es = Elasticsearch(['es'])
-
+    objs = []
+    post_copy = copy.copy(request.POST)
+    del post_copy['query']
+    del post_copy['user']
+    filters=[]
+    keys=[]
+    values=[]
+    for key, value in post_copy.items():
+        print(post_copy[key])
+        print(key)
+        values.append(post_copy[key])
+        keys.append(key)
+        if post_copy[key] == 'True':
+            filters.append(key)
+    print(filters)
     if request.POST.get('user') == 'True':
         result = es.search(index='user_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
+    # else:
+        # if "id" in filters:
+        #     result = es.search(index='listing_index', body={'query':{'query_string': {"fields":filters,'query': query}},'size':10})
+    #if name filter is checked and the query is not a number, only search for the apartments with name matching the query since there is a data type issue otherwise
+    elif request.POST.get('name') == 'True' and not request.POST.get('query').isdigit():
+        result = es.search(index='listing_index', body={'query': {'query_string': {"fields": ['name'], 'query': query}}, 'size': 10})
     else:
-        result = es.search(index='listing_index', body={'query': {'query_string': {'query': query}}, 'size': 10})
-
+        #If name filter is not checked and there exist filters and the query is not a number, then return false since there is a data type issue
+        if request.POST.get('name') == 'False' and len(filters) != 0 and not request.POST.get('query').isdigit():
+            response = {'valid': False,
+                        'message': 'Error.  Data type conflict.  Query is a string but id and price filters only accept numbers.'}
+            return JsonResponse(response)
+        #else, just use the filters normally and make sure that for the filters that are checked, they match the query
+        result = es.search(index='listing_index', body={'query': {'query_string': {"fields":filters,'query': query}},'size': 10})
     if result['timed_out'] == True:
         response = {'valid': False, 'message': 'Search timed out'}
         return JsonResponse(response)
 
-    objs = []
     for element in result['hits']['hits']:
         objs.append(element['_source'])
 
-    if request.POST.get('user'):
+    if request.POST.get('user') == 'True':
         objs.sort(key=lambda x: x['username'])
     else:
         objs.sort(key=lambda x: x['id'])
-    response = {'valid': True, 'result': objs, 'user': request.POST.get('user')}
+    response = {'valid': True, 'result': objs, 'user': request.POST.get('user'), 'postcopy':post_copy, 'filters': filters,'values':values,
+                'keys':keys}
     return JsonResponse(response)
 
 @csrf_exempt
@@ -117,7 +143,6 @@ def signup(request):
     else:
         return JsonResponse({'valid': False, 'result': "Passwords do not match"})
     if response['valid']:
-        print("USER CREATEDDSGLADJKGJADSKGAJDSLGAJDSKLGADS")
         producer = KafkaProducer(bootstrap_servers='kafka:9092')
         new_listing = response['result']
         producer.send('new-listings-topic', json.dumps(new_listing).encode('utf-8'))
