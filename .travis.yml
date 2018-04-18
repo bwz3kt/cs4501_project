@@ -10,7 +10,6 @@ services:
 
 env:
   global:
-    - PYTHONPATH="/home/travis/build/bwz3kt/cs4501_project"
     - BUILD_ON_TRAVIS=true
   matrix:
     - DJANGO=1.10 DB=mysql
@@ -28,7 +27,7 @@ branches:
 
 before_script:
   - mysql -e 'create database travis_ci_db;'
-  - python manage.py syncdb --noinput
+  - python ./models/manage.py syncdb --noinput
 
 script:
   - python ./models/manage.py test api.tests
