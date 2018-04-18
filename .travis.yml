@@ -27,7 +27,8 @@ branches:
 
 before_script:
   - mysql -e 'create database travis_ci_db;'
-  - python ./models/manage.py syncdb --noinput
+  - python ./models/manage.py migrate
+  - python ./models/manage.py makemigrations
 
 script:
   - python ./models/manage.py test api.tests
