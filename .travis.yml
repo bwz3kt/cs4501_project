@@ -16,5 +16,5 @@ branches:
   - master
 
 script:
-  - python ./models/api/tests.py
+  - python ./models/manage.py test
   - python ./selenium/selenium_script.py
