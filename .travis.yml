@@ -5,6 +5,16 @@ python:
 
 cache: pip
 
+services:
+  - mysql
+
+env:
+  global:
+    - PYTHONPATH="/home/travis/build/bwz3kt/cs4501_project"
+    - BUILD_ON_TRAVIS=true
+  matrix:
+    - DJANGO=1.10 DB=mysql
+
 install:
   - pip install django==1.10
   - pip install selenium
@@ -15,6 +25,10 @@ install:
 branches:
   only:
   - master
+
+before_script:
+  - mysql -e 'create database travis_ci_db;'
+  - python manage.py syncdb --noinput
 
 script:
   - python ./models/manage.py test api.tests

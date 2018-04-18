@@ -74,19 +74,33 @@ WSGI_APPLICATION = 'models.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+if os.getenv('BUILD_ON_TRAVIS', None):
+    SECRET_KEY = "SecretKeyForUseOnTravis"
+    DEBUG = False
+    TEMPLATE_DEBUG = True
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cs4501',
-        'USER': 'www',
-        'PASSWORD': '$3cureUS',
-        'HOST': 'db',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'travis_ci_db',
+            'USER': 'travis',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'cs4501',
+            'USER': 'www',
+            'PASSWORD': '$3cureUS',
+            'HOST': 'db',
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+            },
+        }
+    }
 
 
 # Password validation
