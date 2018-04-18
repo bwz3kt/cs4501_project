@@ -108,3 +108,14 @@ selenium-test:
     - ./selenium:/app
   command: bash -c "pip install selenium==3.7.0 && python /app/selenium_script.py"
 
+haproxy:
+  container_name: haproxy
+  image: haproxy:1.7
+  ports:
+    - "8006:8000"
+  links:
+    - web:web
+    - web1:web1
+    - web2:web2
+    - web3:web3
+
