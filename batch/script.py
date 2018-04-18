@@ -5,7 +5,7 @@ import time
 import json
 
 print("Batch Script Running")
-time.sleep(10)
+time.sleep(20)
 
 consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
 es = Elasticsearch(['es'])
