@@ -10,11 +10,12 @@ install:
   - pip install selenium
   - pip install requests
   - pip install django-mysql
+  - pip install mysql-python
 
 branches:
   only:
   - master
 
 script:
-  - python ./models/manage.py test
+  - python ./models/manage.py test api.tests
   - python ./selenium/selenium_script.py

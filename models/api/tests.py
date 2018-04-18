@@ -1,11 +1,11 @@
 from django.test import TestCase
 from django.test import Client
 from django.core.urlresolvers import reverse
-from models import Apartment
-from models import *
-from django.core import management
-from api import urls
-from api import views
+from api.models import *
+#from models.api.models import *
+# from django.core import management
+# from api import urls
+# from api import views
 import unittest
 import json
 from django.contrib.auth.hashers import *
