@@ -1,0 +1,18 @@
+language: python
+
+python:
+  - '3.5.2'
+
+cache: pip
+
+install:
+  - pip install requests
+  - pip install django-mysql
+
+branches:
+  only:
+  - master
+
+script:
+  - python ./models/api/tests.py
+  - python ./selenium/selenium_script.py

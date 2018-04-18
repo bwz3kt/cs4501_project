@@ -57,3 +57,21 @@ batch:
       - .:/app
    command: bash -c "python /app/batch/script.py"
 
+selenium-chrome:
+  image: selenium/standalone-chrome
+  container_name: selenium-chrome
+  links:
+    - web:web
+  ports:
+    - "4444:4444"
+
+selenium-test:
+  image: tp33/django
+  container_name: selenium
+  links:
+    - selenium-chrome:selenium-chrome
+    - web:web
+  volumes:
+    - ./selenium:/app
+  command: bash -c "pip install selenium==3.7.0 && python /app/selenium_script.py"
+
