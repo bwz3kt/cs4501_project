@@ -33,6 +33,39 @@ web:
       - .:/app
   command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
 
+web1:
+  container_name: web1
+  image: tp33/django
+  links:
+      - exp:exp-api
+  ports:
+      - "8003:8000"
+  volumes:
+      - .:/app
+  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+
+web2:
+  container_name: web2
+  image: tp33/django
+  links:
+      - exp:exp-api
+  ports:
+      - "8004:8000"
+  volumes:
+      - .:/app
+  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+
+web3:
+  container_name: web3
+  image: tp33/django
+  links:
+      - exp:exp-api
+  ports:
+      - "8005:8000"
+  volumes:
+      - .:/app
+  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+
 kafka:
    image: spotify/kafka
    container_name: kafka
