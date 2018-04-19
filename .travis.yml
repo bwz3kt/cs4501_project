@@ -16,9 +16,6 @@ env:
 
 install:
   - pip install django==1.10
-  - pip install selenium==3.7.0
-  - pip install chromedriver_installer
-  - pip install chromedriver-binary
   - pip install requests
   - pip install django-mysql
   - pip install mysqlclient
@@ -34,4 +31,3 @@ before_script:
 
 script:
   - python ./models/manage.py test api.tests
-  - python ./selenium/selenium_script.py
