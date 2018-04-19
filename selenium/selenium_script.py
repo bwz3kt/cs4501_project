@@ -18,7 +18,11 @@ class SeleniumTests(unittest.TestCase):
         password = "password"
         driver = self.driver
         driver.implicitly_wait(20)
-        driver.get("http://192.168.99.100:8000/")
+        #my ip address
+        #driver.get("http://192.168.99.100:8000/")
+
+        #Travis
+        driver.get("http://174.138.62.246:8000/")
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_password").send_keys(password)
         driver.find_element_by_id("login").click()
@@ -35,7 +39,12 @@ class SeleniumTests(unittest.TestCase):
         confirmpassword = "newpassword"
         driver = self.driver
         driver.implicitly_wait(20)
-        driver.get("http://192.168.99.100:8000/signup/")
+        #my ip address
+        #driver.get("http://192.168.99.100:8000/signup/")
+
+        #travis
+        driver.get("http://174.138.62.246:8000/signup/")
+
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_email").send_keys(email)
         driver.find_element_by_id("id_password").send_keys(password)
@@ -43,7 +52,7 @@ class SeleniumTests(unittest.TestCase):
         driver.find_element_by_id("signup").click()
         driver.implicitly_wait(20)
 
-        #commenting out logout_text will work
+        #logout_text not working
         #logout_text = driver.find_element_by_id("logout").text
         #self.assertEqual("Log Out", logout_text)
 
@@ -57,7 +66,12 @@ class SeleniumTests(unittest.TestCase):
 
     def test_home_page(self):
         driver = self.driver
-        driver.get("http://192.168.99.100:8000/home/")
+        #My ip address
+        #driver.get("http://192.168.99.100:8000/home/")
+
+        #Travis
+        driver.get("http://174.138.62.246:8000/home/")
+
         #assert "ApartFinder is a website to help renters find tenants easily!" in driver.page_source
 
     def tearDown(self):
