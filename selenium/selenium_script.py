@@ -1,4 +1,4 @@
-print("hey selenium is running")
+print("Selenium script started.")
 import unittest
 from django.test import TestCase
 from selenium import webdriver
@@ -23,7 +23,16 @@ class SeleniumTests(unittest.TestCase):
         driver.get("http://192.168.99.100:8000/")
 
         #Travis
+<<<<<<< HEAD
         #driver.get("http://174.138.62.246:8000/")
+=======
+        #driver.get("http://localhost:8000/")
+        ids = driver.find_elements_by_xpath('//*[@id]')
+
+        for ii in ids:
+            print(ii.get_attribute('id'))
+        print("Printed all attributes")
+>>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_password").send_keys(password)
         driver.find_element_by_id("login").click()
@@ -44,7 +53,11 @@ class SeleniumTests(unittest.TestCase):
         driver.get("http://192.168.99.100:8000/signup/")
 
         #travis
+<<<<<<< HEAD
         #driver.get("http://174.138.62.246:8000/signup/")
+=======
+        #driver.get("http://web-api:8000/signup/")
+>>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
 
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_email").send_keys(email)
@@ -71,7 +84,11 @@ class SeleniumTests(unittest.TestCase):
         driver.get("http://192.168.99.100:8000/home/")
 
         #Travis
+<<<<<<< HEAD
         #driver.get("http://174.138.62.246:8000/home/")
+=======
+        #driver.get("http://web-api:8000/home/")
+>>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
 
         #assert "ApartFinder is a website to help renters find tenants easily!" in driver.page_source
 
