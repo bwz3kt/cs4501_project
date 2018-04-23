@@ -106,7 +106,7 @@ selenium-test:
     - web:web
   volumes:
     - ./selenium:/app
-  command: bash -c "pip install selenium==3.7.0 && python /app/selenium_script.py"
+  command: bash -c "pip install selenium==3.7.0 && sleep 35 && python /app/selenium_script.py"
 
 haproxy:
   container_name: haproxy

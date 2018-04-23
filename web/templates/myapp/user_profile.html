@@ -26,7 +26,7 @@
           <td>{{object.price}}</td>
           <td>{{object.rating}}/5</td>
             <td><a href="/update/{{object.id}}">Edit Apartment</a></td>
-          <td><a href="/delete/{{object.id}}">Delete Apartment</a></td>
+          <td><a id="delete{{object.id}}" href="/delete/{{object.id}}">Delete Apartment</a></td>
         </tr>
         </tbody>
         {% endfor %}

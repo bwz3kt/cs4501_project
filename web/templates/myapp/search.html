@@ -7,7 +7,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         <p>{{message}}</p>
-        <button type="submit">Search</button>
+        <button id="searchbutton" type="submit">Search</button>
     </form>
     {% if objects != None %}
         <br>
