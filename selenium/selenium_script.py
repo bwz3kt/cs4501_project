@@ -3,6 +3,9 @@ import unittest
 from django.test import TestCase
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.common.keys import Keys
 import time
 
@@ -13,52 +16,37 @@ class SeleniumTests(unittest.TestCase):
             command_executor='http://selenium-chrome:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.CHROME)
 
-    # COMMENTED OUT b/c cannot pass through Travis.
+    #User should be able to log in (test)
     def test_user_login(self):
-        username = "cyeung"
-        password = "password"
+        username = "tk9at"
+        password = "wldnro"
         driver = self.driver
-        driver.implicitly_wait(20)
         #my ip address
-        driver.get("http://192.168.99.100:8000/")
-
-        #Travis
-<<<<<<< HEAD
-        #driver.get("http://174.138.62.246:8000/")
-=======
-        #driver.get("http://localhost:8000/")
+        driver.get("http://192.168.99.100:8000")
         ids = driver.find_elements_by_xpath('//*[@id]')
 
         for ii in ids:
             print(ii.get_attribute('id'))
         print("Printed all attributes")
->>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
+
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_password").send_keys(password)
         driver.find_element_by_id("login").click()
         driver.implicitly_wait(20)
-        #Log out shit doesn't work right now.
-        #logout_text = driver.find_element_by_id("logout").text
-        #driver.implicitly_wait(20)
-        #self.assertEqual("Log Out", logout_text)
+        #header_text = driver.find_element_by_tag_name("h3").text
+        #driver.find_element_by_id("login").click()
+        #print(header_text)
+        self.assertEqual("Welcome to ApartFinder", driver.title)
 
+    #User should be able to Sign up(test)
     def test_user_signup(self):
-        username = "testuser"
-        email="test@virginia.edu"
-        password = "newpassword"
-        confirmpassword = "newpassword"
+        username = "taechristes"
+        email="taechristes@virginia.edu"
+        password = "mypas"
+        confirmpassword = "mypas"
         driver = self.driver
-        driver.implicitly_wait(20)
         #my ip address
         driver.get("http://192.168.99.100:8000/signup/")
-
-        #travis
-<<<<<<< HEAD
-        #driver.get("http://174.138.62.246:8000/signup/")
-=======
-        #driver.get("http://web-api:8000/signup/")
->>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
-
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_email").send_keys(email)
         driver.find_element_by_id("id_password").send_keys(password)
@@ -66,31 +54,139 @@ class SeleniumTests(unittest.TestCase):
         driver.find_element_by_id("signup").click()
         driver.implicitly_wait(20)
 
-        #logout_text not working
-        #logout_text = driver.find_element_by_id("logout").text
-        #self.assertEqual("Log Out", logout_text)
+        self.assertEqual("Welcome to ApartFinder", driver.title)
 
-
-
-        #Just the test I made, but doesn't work -Taehyun-
-        #driver.find_element_by_xpath("/base/body/nav/div[2]/div[1]/div[1]/li/a").click()
-        #assert "Log Out:" in driver.page_source
-        #driver.implicitly_wait(20)
-
-
-    def test_home_page(self):
+    #User should be able to Sign out (Test)
+    def test_user_logout(self):
         driver = self.driver
         #My ip address
-        driver.get("http://192.168.99.100:8000/home/")
-
-        #Travis
-<<<<<<< HEAD
-        #driver.get("http://174.138.62.246:8000/home/")
-=======
-        #driver.get("http://web-api:8000/home/")
->>>>>>> a9c2c0c8d73de40a3e0a83168c665b18834af695
-
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("logout").click()
+        header_text = driver.find_element_by_tag_name("h3").text
+        print(header_text)
+        self.assertEqual("Log in", header_text)
         #assert "ApartFinder is a website to help renters find tenants easily!" in driver.page_source
+
+    #use should be able to view user Lists (Test)
+    def test_user_lists(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("top").click()
+        driver.implicitly_wait(20)
+        topheader_text = driver.find_element_by_tag_name("h3").text
+        print(topheader_text)
+        self.assertEqual("Apartment List", topheader_text)
+        driver.find_element_by_id("price").click()
+        driver.implicitly_wait(20)
+        priceheader_text = driver.find_element_by_tag_name("h3").text
+        print(priceheader_text)
+        self.assertEqual("Apartment List", priceheader_text)
+        driver.find_element_by_id("all").click()
+        driver.implicitly_wait(20)
+        allheader_text = driver.find_element_by_tag_name("h3").text
+        print(allheader_text)
+        self.assertEqual("Apartment List", allheader_text)
+
+    #User should be able to view all apartments (Test)
+    def test_all_apartments(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("all").click()
+        driver.implicitly_wait(20)
+        assert ("Apartment 8") in driver.page_source
+
+    #User should be able to create apartment (Test)
+    def test_create_apartments(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("create").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("id_name").send_keys("testapt")
+        driver.find_element_by_id("id_price").send_keys(1228)
+        driver.find_element_by_id("createbutton").click()
+        driver.implicitly_wait(20)
+
+        assert ("testapt") in driver.page_source
+
+    #User should be able to search apartment (Test)
+    def test_search_apartments(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("search").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("id_query").send_keys("Apartment")
+        driver.find_element_by_id("searchbutton").click()
+        driver.implicitly_wait(20)
+        assert ("Apartment 1") in driver.page_source
+
+    #User should be able to delete apartment (Test)
+    def test_delete_apartment(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("profile").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("delete5").click()
+        driver.implicitly_wait(20)
+        assert ("Apartment 5") not in driver.page_source
+
+    #User should be able to view their profile (Test)
+    def test_user_profile(self):
+        driver = self.driver
+        # My ip address
+        driver.get("http://192.168.99.100:8000")
+        username = "tk9at"
+        password = "wldnro"
+        driver.find_element_by_id("id_username").send_keys(username)
+        driver.find_element_by_id("id_password").send_keys(password)
+        driver.find_element_by_id("login").click()
+        driver.implicitly_wait(20)
+        driver.find_element_by_id("profile").click()
+        driver.implicitly_wait(20)
+        header_text = driver.find_element_by_tag_name("h4").text
+        print(header_text)
+        self.assertEqual("Your Apartments", header_text)
+
 
     def tearDown(self):
         self.driver.close()
