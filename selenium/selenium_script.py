@@ -49,7 +49,7 @@ class SeleniumTests(unittest.TestCase):
         driver.get("http://192.168.99.100:8000/signup/")
 
         #travis
-        #driver.get("http://web-api:8000/signup/")
+        #driver.get("http://localhost:8000/signup/")
 
         driver.find_element_by_id("id_username").send_keys(username)
         driver.find_element_by_id("id_email").send_keys(email)
@@ -57,7 +57,6 @@ class SeleniumTests(unittest.TestCase):
         driver.find_element_by_id("id_passwordConfirm").send_keys(confirmpassword)
         driver.find_element_by_id("signup").click()
         driver.implicitly_wait(20)
-
         #logout_text not working
         #logout_text = driver.find_element_by_id("logout").text
         #self.assertEqual("Log Out", logout_text)
@@ -76,7 +75,7 @@ class SeleniumTests(unittest.TestCase):
         driver.get("http://192.168.99.100:8000/home/")
 
         #Travis
-        #driver.get("http://web-api:8000/home/")
+        #driver.get("http://localhost:8000/home/")
 
         #assert "ApartFinder is a website to help renters find tenants easily!" in driver.page_source
 
@@ -86,4 +85,5 @@ class SeleniumTests(unittest.TestCase):
 
 if __name__ == "__main__":
     print("main ran")
-    unittest.main()
+    # time.sleep(15)
+    # unittest.main()

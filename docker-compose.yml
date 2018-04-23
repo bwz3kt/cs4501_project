@@ -110,11 +110,10 @@ selenium-test:
 
 haproxy:
   container_name: haproxy
-  #not sure If this is the problem
-  build : ./haproxy
-
+  image: haproxy
+  #build : ./haproxy
   ports:
-    - "8006:8000"
+    - "80:80"
   links:
     - web:web
     - web1:web1
