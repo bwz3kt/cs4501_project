@@ -7,6 +7,8 @@ import json
 import urllib.request
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_page
+
 
 def login_required(f):
     def wrap(request, *args, **kwargs):
@@ -42,6 +44,8 @@ def index(request):
 
 @login_required
 @csrf_exempt
+@cache_page(60*1)
+#cache top views for a minute
 def top(request):
     req = urllib.request.Request('http://exp-api:8000/v1/top')
     response = urllib.request.urlopen(req).read().decode('utf-8')

@@ -73,7 +73,7 @@ class SeleniumTests(unittest.TestCase):
         self.assertEqual("Log in", header_text)
         #assert "ApartFinder is a website to help renters find tenants easily!" in driver.page_source
 
-    #use should be able to view user Lists (Test)
+    #User should be able to view Apartment Lists (top rated, cheapest, and all apartments) (Test)
     def test_user_lists(self):
         driver = self.driver
         # My ip address
