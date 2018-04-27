@@ -27,44 +27,48 @@ web:
   image: tp33/django
   links:
       - exp:exp-api
+      - redis:redis
   ports:
       - "8000:8000"
   volumes:
       - .:/app
-  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+  command: bash -c "pip install --upgrade django==1.11 && pip install redis==2.10.0 && pip install django-redis && pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
 
 web1:
   container_name: web1
   image: tp33/django
   links:
       - exp:exp-api
+      - redis:redis
   ports:
       - "8003:8000"
   volumes:
       - .:/app
-  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+  command: bash -c "pip install --upgrade django==1.11  && pip install redis==2.10.0 && pip install django-redis && pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
 
 web2:
   container_name: web2
   image: tp33/django
   links:
       - exp:exp-api
+      - redis:redis
   ports:
       - "8004:8000"
   volumes:
       - .:/app
-  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+  command: bash -c "pip install --upgrade django==1.11 && pip install redis==2.10.0 && pip install django-redis && pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
 
 web3:
   container_name: web3
   image: tp33/django
   links:
       - exp:exp-api
+      - redis:redis
   ports:
       - "8005:8000"
   volumes:
       - .:/app
-  command: bash -c "pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
+  command: bash -c "pip install --upgrade django==1.11 && pip install redis==2.10.0 && pip install django-redis && pip install django-redis && pip install requests && mod_wsgi-express start-server --working-directory /app/web --reload-on-changes --log-to-terminal /app/web/web/wsgi.py"
 
 kafka:
    image: spotify/kafka
@@ -119,4 +123,12 @@ haproxy:
     - web1:web1
     - web2:web2
     - web3:web3
+
+redis:
+   image: redis
+   container_name: redis
+   ports:
+     - "6379:6379"
+
+
 
