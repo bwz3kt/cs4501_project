@@ -193,6 +193,6 @@ class SeleniumTests(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print("main ran")
+    print("Selenium main ran.")
     # time.sleep(15)
     # unittest.main()

@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import *
 from kafka import KafkaProducer
 import copy
 from elasticsearch import Elasticsearch
+import requests
 
 
 @csrf_exempt
@@ -37,10 +38,17 @@ def get_price_data(request):
 
 @csrf_exempt
 def get_details(request, id):
-    template_data = urllib.request.Request('http://models-api:8000/api/v1/item/' + str(id))
-    response = urllib.request.urlopen(template_data).read().decode('utf-8')
-    response = json.loads(response)
+    # template_data = urllib.request.Request('http://models-api:8000/api/v1/item/' + str(id))
+    # response = urllib.request.urlopen(template_data).read().decode('utf-8')
+    # response = json.loads(response)
+    auth = request.COOKIES.get('auth')
+    cookies = {'auth': auth}
+    r = requests.get('http://models-api:8000/api/v1/item/' + str(id), cookies=cookies)
+    response = r.json()
     if response['valid'] == True:
+        producer = KafkaProducer(bootstrap_servers='kafka:9092')
+        new_listing = response['result']
+        producer.send('spark-topic', json.dumps(new_listing).encode('utf-8'))
         return JsonResponse({'valid': response['valid'], 'result': response['result']})
     else:
         return JsonResponse(response)

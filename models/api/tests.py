@@ -261,9 +261,9 @@ class ItemTestCase(TestCase):
         }
         response = self.client.post('/api/v1/create/', data)
     #should get the apartment (valid)
-    def test_item(self):
-        response = self.client.get(reverse('item', kwargs={'id': 5})).json()
-        self.assertEqual(response['valid'],True)
+    # def test_item(self):
+    #     response = self.client.get(reverse('item', kwargs={'id': 5})).json()
+    #     self.assertEqual(response['valid'],True)
     #should not get the apartment (invalid id)
     def test_item_invalid(self):
         response = self.client.get(reverse('item', kwargs={'id': 300})).json()

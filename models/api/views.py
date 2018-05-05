@@ -53,12 +53,15 @@ def get_price_list(request):
 @csrf_exempt
 def item(request, id):
     data = {}
+    auth = request.COOKIES.get('auth')
     if Apartment.objects.all().filter(id=id).exists():
         apts = Apartment.objects.all().filter(id=id).values()
+        user_id = Authenticator.objects.get(authenticator=auth).user_id
         data = {}
         data['valid'] = True
         data['result'] = list(apts)
         data['result'][0]['id'] = id
+        data['result'][0]['user_id'] = user_id
         print(data['result'])
     else:
         data['valid'] = False

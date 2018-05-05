@@ -8,6 +8,7 @@ import urllib.request
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import cache_page
+import requests
 
 
 def login_required(f):
@@ -194,9 +195,13 @@ def update(request, id):
 @login_required
 @csrf_exempt
 def details(request, id):
-    req = urllib.request.Request('http://exp-api:8000/v1/get_details/' + str(id))
-    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
-    resp = json.loads(resp_json)
+    # req = urllib.request.Request('http://exp-api:8000/v1/get_details/' + str(id))
+    # resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    # resp = json.loads(resp_json)
+    auth = request.COOKIES.get('auth')
+    cookies = {'auth': auth}
+    r = requests.get('http://exp-api:8000/v1/get_details/' + str(id), cookies=cookies)
+    resp = r.json()
     if resp['valid'] == True:
         return render(request, 'myapp/view.html', {'apartment': resp['result'][0]})
     else:
