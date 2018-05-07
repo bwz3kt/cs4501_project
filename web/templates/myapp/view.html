@@ -7,6 +7,39 @@
     <p>Price: ${{apartment.price}}</p>
     <p>Overall Rating: {{apartment.rating}}</p>
     <p>Apartment Owner: <a href="/profile/{{apartment.username}}">{{apartment.username}}</a></p>
+
+        {% if rec %}
+    <div>
+        <div class="col-md-8 col-md-offset-2">
+            <h3>Recommended Apartments</h3>
+        </div>
+
+        <div>
+          <table class="table table-striped" style="table-layout:fixed">
+            <thead>
+            <tr>
+              <th>Apartment ID
+              <th>Apartment Name
+              <th>Apartment Price
+              <th>Apartment Rating
+              <th>Apartment Owner</th>
+            </tr>
+            </thead>
+            {% for object in rec %}
+            <tbody>
+            <tr>
+              <td>{{object.id}}</td>
+              <td><a href="/details/{{object.id}}">{{object.name}}</a></td>
+              <td>{{object.price}}</td>
+              <td>{{object.rating}}/5</td>
+              <td><a href="/profile/{{object.username}}">{{object.username}}</a></td>
+            </tr>
+            </tbody>
+            {% endfor %}
+          </table>
+        </div>
+    </div>
+    {% endif %}
     <a href="/home">Apartment List</a>
     <!--
     <table class="table table-striped" style="table-layout:fixed">

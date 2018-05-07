@@ -49,7 +49,7 @@ def get_details(request, id):
         producer = KafkaProducer(bootstrap_servers='kafka:9092')
         new_listing = response['result']
         producer.send('spark-topic', json.dumps(new_listing).encode('utf-8'))
-        return JsonResponse({'valid': response['valid'], 'result': response['result']})
+        return JsonResponse({'valid': response['valid'], 'result': response['result'], 'rec': response['rec']})
     else:
         return JsonResponse(response)
 

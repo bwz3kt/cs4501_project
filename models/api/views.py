@@ -9,7 +9,32 @@ import os
 import hmac
 from django.conf import settings
 from django.contrib.auth.hashers import *
+from django.forms.models import model_to_dict
 
+@csrf_exempt
+def item(request, id):
+    data = {}
+    auth = request.COOKIES.get('auth')
+    if Apartment.objects.all().filter(id=id).exists():
+        apts = Apartment.objects.all().filter(id=id).values()
+        user_id = Authenticator.objects.get(authenticator=auth).user_id
+        data = {}
+        data['valid'] = True
+        data['result'] = list(apts)
+        data['result'][0]['id'] = id
+        data['result'][0]['user_id'] = user_id
+
+        recommended = [f['recommended_items'] for f in list(Recommendations.objects.all().filter(item_id=id).values())]
+        data['rec'] = recommended
+        recommended_apts = []
+        for apt_id in recommended:
+            recommended_apts.append(model_to_dict(Apartment.objects.get(id=apt_id)))
+        data['rec'] = recommended_apts
+        print(data['result'])
+    else:
+        data['valid'] = False
+        data['message'] = 'Apartment does not exist.'
+    return JsonResponse(data)
 
 @csrf_exempt
 def get_list(request):
@@ -48,24 +73,6 @@ def get_price_list(request):
         ids['id'] = list(apts)[0].get('id')
     for i in range(len(data['result'])):
         data['result'][i]['id'] = list(apts)[i].get('id')
-    return JsonResponse(data)
-
-@csrf_exempt
-def item(request, id):
-    data = {}
-    auth = request.COOKIES.get('auth')
-    if Apartment.objects.all().filter(id=id).exists():
-        apts = Apartment.objects.all().filter(id=id).values()
-        user_id = Authenticator.objects.get(authenticator=auth).user_id
-        data = {}
-        data['valid'] = True
-        data['result'] = list(apts)
-        data['result'][0]['id'] = id
-        data['result'][0]['user_id'] = user_id
-        print(data['result'])
-    else:
-        data['valid'] = False
-        data['message'] = 'Apartment does not exist.'
     return JsonResponse(data)
 
 @csrf_exempt

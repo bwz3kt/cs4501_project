@@ -203,7 +203,7 @@ def details(request, id):
     r = requests.get('http://exp-api:8000/v1/get_details/' + str(id), cookies=cookies)
     resp = r.json()
     if resp['valid'] == True:
-        return render(request, 'myapp/view.html', {'apartment': resp['result'][0]})
+        return render(request, 'myapp/view.html', {'apartment': resp['result'][0], 'rec': resp['rec']})
     else:
         #return JsonResponse(resp)
         return redirect('/home')
