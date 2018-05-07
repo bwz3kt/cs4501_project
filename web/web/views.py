@@ -7,7 +7,7 @@ import json
 import urllib.request
 import urllib.parse
 from django.views.decorators.csrf import csrf_exempt
-# from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page
 import requests
 
 
@@ -45,7 +45,7 @@ def index(request):
 
 @login_required
 @csrf_exempt
-# @cache_page(60*1)
+@cache_page(60*1)
 #cache top views for a minute
 def top(request):
     req = urllib.request.Request('http://exp-api:8000/v1/top')
@@ -56,7 +56,7 @@ def top(request):
 
 @login_required
 @csrf_exempt
-# @cache_page(60*1)
+@cache_page(60*1)
 #cache price views for a minute
 def price(request):
     req = urllib.request.Request('http://exp-api:8000/v1/price')
