@@ -23,6 +23,10 @@ class Authenticator(models.Model):
     user_id = models.IntegerField(default=1)
     date_created = models.DateField(default=datetime.now)
 
+class Recommendations(models.Model):
+    item_id = models.IntegerField(default=1)
+    recommended_items = models.CharField(max_length=400)
+
 # class Comment(models.Model):
 #     comment = models.CharField(max_length=500)
 #     rating = models.IntegerField(
